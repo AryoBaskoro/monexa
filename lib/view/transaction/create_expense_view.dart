@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:monexa_app/widgets/amount_input_field.dart';
 import 'package:monexa_app/widgets/animated_entry.dart';
 import 'package:monexa_app/widgets/checkbox_text.dart';
+import 'package:monexa_app/widgets/checkbox_text.dart';
 import 'package:monexa_app/widgets/custom_header.dart';
 import 'package:monexa_app/widgets/date_picker_field.dart';
+import 'package:monexa_app/widgets/divider_with_text.dart';
 import 'package:monexa_app/widgets/note_input_field.dart';
+import 'package:monexa_app/widgets/outlined_icon_button.dart';
+import 'package:monexa_app/widgets/primary_button.dart';
 import 'package:monexa_app/widgets/tertiary_button.dart';
 import '../../common/color_extension.dart';
 import 'dart:async';
@@ -22,7 +26,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
   
   String selectedCategory = 'Entertainment';
   DateTime selectedDate = DateTime.now();
-  bool _isRecurring = false; // <-- VARIABEL BARU
+  bool _isRecurring = false;
   
   late AnimationController _animationController;
 
@@ -62,9 +66,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
       body: SafeArea(
         child: Column(
           children: [
-            // 2. Ganti widget lama dengan widget kustom
             const CustomHeader(title: 'Add Expenses'),
-            
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -72,11 +74,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    AnimatedEntry(
-                      index: 0,
-                      controller: _animationController,
-                      child: AmountInputField(controller: _amountController),
-                    ),
+                    AnimatedEntry(index: 0, controller: _animationController, child: AmountInputField(controller: _amountController)),
                     const SizedBox(height: 20),
                     AnimatedEntry(index: 1, controller: _animationController, child: _buildCategorySection(media)),
                     const SizedBox(height: 20),
@@ -86,36 +84,26 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
                       child: DatePickerField(
                         selectedDate: selectedDate,
                         onDateSelected: (newDate) {
-                          setState(() {
-                            selectedDate = newDate;
-                          });
+                          setState(() => selectedDate = newDate);
                         },
                       ),
-                  ),
+                    ),
                     const SizedBox(height: 20),
-
                     AnimatedEntry(
                       index: 3,
                       controller: _animationController,
                       child: CheckboxText(
-                        label: "Mark as recurring expense",
+                        label: "Tandai sebagai pengeluaran rutin",
                         value: _isRecurring,
-                        activeColor: TColor.secondary, // Warna untuk expense
+                        activeColor: TColor.secondary,
                         onChanged: (newValue) {
-                          setState(() {
-                            _isRecurring = newValue;
-                          });
+                          setState(() => _isRecurring = newValue);
                         },
                       ),
                     ),
                     const SizedBox(height: 20),
-                    AnimatedEntry(
-                      index: 4,
-                      controller: _animationController,
-                      child: NoteInputField(controller: _noteController),
-                    ),
+                    AnimatedEntry(index: 4, controller: _animationController, child: NoteInputField(controller: _noteController)),
                     const SizedBox(height: 32),
-
                     AnimatedEntry(
                       index: 5,
                       controller: _animationController,
@@ -126,8 +114,23 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
                         shadowColor: TColor.secondary,
                       ),
                     ),
-                    
-                    // ... (sisa widget Anda)
+                    const SizedBox(height: 20),
+                    AnimatedEntry(
+                      index: 6,
+                      controller: _animationController,
+                      child: const DividerWithText(text: 'or'),
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedEntry(
+                      index: 7,
+                      controller: _animationController,
+                      child: OutlinedIconButton(
+                        title: 'Scan Receipt',
+                        icon: Icons.document_scanner_rounded,
+                        onTap: _scanReceipt,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -139,6 +142,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
   }
   
   Widget _buildCategorySection(Size media) {
+    // ... (kode ini tetap sama karena spesifik untuk halaman ini)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -179,6 +183,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
   }
 
   Widget _buildCategoryButton({required String name, required IconData icon, required Color color, required bool isSelected}) {
+    // ... (kode ini juga tetap sama)
     return InkWell(
       onTap: () => setState(() => selectedCategory = name),
       borderRadius: BorderRadius.circular(16),
@@ -213,42 +218,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
     );
   }
   
-  Widget _buildOrDivider() {
-    return Row(
-      children: [
-        Expanded(child: Container(height: 1, color: TColor.border.withOpacity(0.1))),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text('or', style: TextStyle(color: TColor.gray40, fontSize: 12, fontWeight: FontWeight.w600)),
-        ),
-        Expanded(child: Container(height: 1, color: TColor.border.withOpacity(0.1))),
-      ],
-    );
-  }
-  
-  Widget _buildScanReceiptButton(Size media) {
-    return InkWell(
-      onTap: _scanReceipt,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          border: Border.all(color: TColor.border.withOpacity(0.15)),
-          color: TColor.gray60.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.document_scanner_rounded, color: TColor.white, size: 22),
-            const SizedBox(width: 12),
-            Text('Scan Receipt', style: TextStyle(color: TColor.white, fontSize: 16, fontWeight: FontWeight.w700)),
-          ],
-        ),
-      ),
-    );
-  }
+  // _buildOrDivider() dan _buildScanReceiptButton() telah dihapus.
 
   void _showCustomSnackBar(String message, {required Color backgroundColor}) {
      ScaffoldMessenger.of(context).showSnackBar(
