@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:monexa_app/view/transaction/add_income_view.dart';
 import 'package:monexa_app/view/transaction/create_expense_view.dart';
 
 import '../../common/color_extension.dart';
@@ -349,8 +350,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
                     ],
                     onTap: () {
                       Navigator.pop(context);
-                      // TODO: Navigate to add income screen
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddIncomeView()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const AddIncomeView()));
                     },
                   ),
                 ),

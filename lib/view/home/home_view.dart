@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 
-import '../../common_widget/custom_arc_painter.dart';
-import '../../common_widget/segment_button.dart';
-import '../../common_widget/status_button.dart';
-import '../../common_widget/subscription_home_row.dart';
-import '../../common_widget/upcoming_bill_row.dart';
+import '../../widgets/custom_arc_painter.dart';
+import '../../widgets/segment_button.dart';
+import '../../widgets/status_button.dart';
+import '../../widgets/subscription_home_row.dart';
+import '../../widgets/upcoming_bill_row.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

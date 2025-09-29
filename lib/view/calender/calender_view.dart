@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 // import 'package:monexa_app/view/settings/settings_view.dart';
 
-import '../../common_widget/subscription_cell.dart';
+import '../../widgets/subscription_cell.dart';
 
 class CalenderView extends StatefulWidget {
   const CalenderView({super.key});
