@@ -130,7 +130,7 @@ class _AddIncomeViewState extends State<AddIncomeView> with SingleTickerProvider
     }
     _showCustomSnackBar('Income added successfully!', backgroundColor: TColor.primary);
     
-    Timer(const Duration(milliseconds: 1500), () {
+    Timer(const Duration(milliseconds: 800), () {
       if (mounted) Navigator.pop(context);
     });
   }

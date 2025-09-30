@@ -239,7 +239,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
     }
     _showCustomSnackBar('Expense saved successfully!', backgroundColor: TColor.primary);
     
-    Timer(const Duration(milliseconds: 1500), () {
+    Timer(const Duration(milliseconds: 800), () {
       if (mounted) Navigator.pop(context);
     });
   }

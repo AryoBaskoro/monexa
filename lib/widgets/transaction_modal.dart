@@ -9,110 +9,124 @@ class TransactionModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
+      height: 345,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            TColor.gray70.withOpacity(0.98),
-            TColor.gray70,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
+        color: TColor.gray80,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(32),
-          topRight: Radius.circular(32),
+          topLeft: Radius.circular(40),
+          topRight: Radius.circular(40),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 30,
-            offset: const Offset(0, -10),
-          ),
-        ],
       ),
       child: Column(
         children: [
           // Drag handle
           Container(
-            margin: const EdgeInsets.only(top: 14),
-            width: 45,
+            margin: const EdgeInsets.only(top: 12),
+            width: 65,
             height: 5,
             decoration: BoxDecoration(
-              color: TColor.gray30.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(3),
+              color: TColor.gray40,
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          const SizedBox(height: 28),
-          _buildTitle(),
-          const SizedBox(height: 36),
-          _buildActionButtons(context),
+          const SizedBox(height: 30),
+          _buildHeader(),
+          const SizedBox(height: 35),
+          _buildActionCards(context),
+          const SizedBox(height: 24),
+          _buildQuickAccess(),
         ],
       ),
     );
   }
 
-  Widget _buildTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                TColor.secondary.withOpacity(0.2),
-                TColor.primary.withOpacity(0.2),
-              ],
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          Text(
+            'Choose a transaction type to continue',
+            style: TextStyle(
+              color: TColor.gray30,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
-            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            Icons.account_balance_wallet_rounded,
-            color: TColor.white,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          'Add Transaction',
-          style: TextStyle(
-            color: TColor.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionCards(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
           Expanded(
-            child: _ModalButton(
-              icon: Icons.arrow_upward_rounded,
-              label: 'Create Expense',
-              colors: [TColor.secondary, TColor.secondary.withOpacity(0.8)],
+            child: _TransactionCard(
+              icon: Icons.trending_up_rounded,
+              title: 'Add Income',
+              subtitle: 'Record earnings',
+              gradient: [
+                TColor.primary,
+                TColor.primary.withOpacity(0.7),
+              ],
+              iconBackground: TColor.primary.withOpacity(0.2),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateExpenseView()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddIncomeView()),
+                );
               },
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: _ModalButton(
-              icon: Icons.arrow_downward_rounded,
-              label: 'Add Income',
-              colors: [TColor.primary, TColor.primary.withOpacity(0.8)],
+            child: _TransactionCard(
+              icon: Icons.trending_down_rounded,
+              title: 'Create Expense',
+              subtitle: 'Track spending',
+              gradient: [
+                TColor.secondary,
+                TColor.secondary.withOpacity(0.7),
+              ],
+              iconBackground: TColor.secondary.withOpacity(0.2),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddIncomeView()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateExpenseView()),
+                );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAccess() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.touch_app_rounded,
+            color: TColor.gray40,
+            size: 16,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Tap a card to get started',
+            style: TextStyle(
+              color: TColor.gray40,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -121,64 +135,93 @@ class TransactionModal extends StatelessWidget {
   }
 }
 
-// Helper widget for buttons inside the modal
-class _ModalButton extends StatelessWidget {
+class _TransactionCard extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final List<Color> colors;
+  final String title;
+  final String subtitle;
+  final List<Color> gradient;
+  final Color iconBackground;
   final VoidCallback onTap;
 
-  const _ModalButton({
+  const _TransactionCard({
     required this.icon,
-    required this.label,
-    required this.colors,
+    required this.title,
+    required this.subtitle,
+    required this.gradient,
+    required this.iconBackground,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        height: 130,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(28),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: gradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: gradient[0].withOpacity(0.4),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+                spreadRadius: -4,
+              ),
+            ],
           ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: colors[0].withOpacity(0.5),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+          child: Container(
+            height: 170,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 65,
+                  height: 65,
+                  decoration: BoxDecoration(
+                    color: iconBackground,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.25),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: TColor.white, size: 32),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              label,
-              style: TextStyle(
-                color: TColor.white,
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

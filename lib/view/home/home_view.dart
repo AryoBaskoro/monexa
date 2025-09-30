@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 import 'package:monexa_app/widgets/collapsible_header.dart';
 import 'package:monexa_app/widgets/segment_button.dart';
-import 'package:monexa_app/widgets/subscription_home_row.dart';
-import 'package:monexa_app/widgets/upcoming_bill_row.dart';
+import 'package:monexa_app/widgets/history_list.dart';
+import 'package:monexa_app/widgets/upcoming_list.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -15,7 +15,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   bool isSubscription = true;
 
-  // Mock data can be moved to a separate file or a ViewModel in a real app
   final List subArr = [
     {"name": "Spotify", "icon": "assets/img/spotify_logo.png", "price": "5.99"},
     {"name": "YouTube Premium", "icon": "assets/img/youtube_logo.png", "price": "18.99"},
@@ -61,14 +60,14 @@ class _HomeViewState extends State<HomeView> {
         children: [
           Expanded(
             child: SegmentButton(
-              title: "Your subscription",
+              title: "History",
               isActive: isSubscription,
               onPressed: () => setState(() => isSubscription = true),
             ),
           ),
           Expanded(
             child: SegmentButton(
-              title: "Upcoming bills",
+              title: "Upcoming",
               isActive: !isSubscription,
               onPressed: () => setState(() => isSubscription = false),
             ),
@@ -106,7 +105,7 @@ class _HomeViewState extends State<HomeView> {
       itemCount: subArr.length,
       itemBuilder: (context, index) {
         var sObj = subArr[index] as Map? ?? {};
-        return SubScriptionHomeRow(
+        return HistoryList(
           sObj: sObj,
           onPressed: () {},
         );
@@ -121,7 +120,7 @@ class _HomeViewState extends State<HomeView> {
       itemCount: bilArr.length,
       itemBuilder: (context, index) {
         var sObj = bilArr[index] as Map? ?? {};
-        return UpcomingBillRow(
+        return UpcomingList(
           sObj: sObj,
           onPressed: () {},
         );

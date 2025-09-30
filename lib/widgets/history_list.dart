@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../common/color_extension.dart';
 
-class UpcomingBillRow extends StatelessWidget {
+class HistoryList extends StatelessWidget {
   final Map sObj;
   final VoidCallback onPressed;
 
-  const UpcomingBillRow(
+  const HistoryList(
       {super.key, required this.sObj, required this.onPressed});
 
   @override
@@ -14,48 +14,27 @@ class UpcomingBillRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius:  BorderRadius.circular(16),
         onTap: onPressed,
         child: Container(
           height: 64,
-          padding: const EdgeInsets.all(10),
+           padding: const EdgeInsets.all( 10),
           decoration: BoxDecoration(
             border: Border.all(
               color: TColor.border.withOpacity(0.15),
             ),
+            
             borderRadius: BorderRadius.circular(16),
           ),
           alignment: Alignment.center,
           child: Row(
             children: [
-              Container(
-                height: 40,
+              
+              
+              Image.asset(
+                sObj["icon"],
                 width: 40,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: TColor.gray70.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                alignment: Alignment.center,
-                child: Column(
-                  children: [
-                    Text(
-                      "Jun",
-                      style: TextStyle(
-                          color: TColor.gray30,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500),
-                    ),
-
-                    Text(
-                      "25",
-                      style: TextStyle(
-                          color: TColor.gray30,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    )
-                  ],
-                ),
+                height: 40,
               ),
               const SizedBox(
                 width: 8,

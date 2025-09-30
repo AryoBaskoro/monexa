@@ -40,6 +40,7 @@ dependencies:
   card_swiper:
     path: dev_lib/card_swiper
   google_nav_bar: ^5.0.7
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

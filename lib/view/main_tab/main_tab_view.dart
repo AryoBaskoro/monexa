@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:monexa_app/view/statistic/statistic_view.dart';
 import 'package:monexa_app/widgets/transaction_fab.dart';
 import '../../common/color_extension.dart';
 import '../calender/calender_view.dart';
-import '../card/cards_view.dart';
 import '../home/home_view.dart';
 
 class MainTabView extends StatefulWidget {
@@ -21,9 +21,9 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
 
   final List<Widget> _views = [
     const HomeView(),
-    Container(color: TColor.gray), // Placeholder untuk 'Budget'
+    const StatisticView(), 
     const CalenderView(),
-    const CardsView(),
+    Container(color: TColor.gray),
   ];
 
   @override
@@ -69,7 +69,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
             opacity: _fadeAnimation,
             child: _views[_selectTab],
           ),
-          // Posisi navigasi di bawah
+          
           Positioned(
             bottom: 0,
             left: 0,
@@ -91,7 +91,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
           children: [
             const Padding(
               padding: EdgeInsets.only(right: 16, bottom: 8),
-              child: TransactionFAB(), // Memanggil widget FAB kustom
+              child: TransactionFAB(), 
             ),
             Container(
               decoration: BoxDecoration(
@@ -120,9 +120,9 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
                   tabBorderRadius: 20,
                   tabs: const [
                     GButton(icon: Icons.home_rounded, text: 'Home'),
-                    GButton(icon: Icons.account_balance_wallet_rounded, text: 'Budget'),
+                    GButton(icon: Icons.bar_chart_rounded, text: 'Statistic'),
                     GButton(icon: Icons.calendar_month_rounded, text: 'Calendar'),
-                    GButton(icon: Icons.credit_card_rounded, text: 'Cards'),
+                    GButton(icon: Icons.person_rounded, text: 'Profile'),
                   ],
                 ),
               ),

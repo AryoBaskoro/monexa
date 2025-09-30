@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 import 'package:monexa_app/widgets/custom_arc_painter.dart';
-import 'package:monexa_app/widgets/status_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CollapsibleHeader extends StatefulWidget {
   const CollapsibleHeader({super.key});
@@ -12,6 +12,7 @@ class CollapsibleHeader extends StatefulWidget {
 
 class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTickerProviderStateMixin {
   bool _isHeaderExpanded = true;
+  bool _isCurrencyVisible = true;
   late AnimationController _animationController;
   late Animation<double> _heightAnimation;
 
@@ -21,7 +22,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300), // Sedikit percepat durasi untuk feel lebih responsif
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
@@ -38,7 +39,34 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
       }
     });
 
-    _animationController.forward();
+    _loadStates();
+  }
+
+  Future<void> _loadStates() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isExpanded = prefs.getBool('header_expanded') ?? true;
+    final isCurrencyVisible = prefs.getBool('currency_visible') ?? true;
+    
+    setState(() {
+      _isHeaderExpanded = isExpanded;
+      _isCurrencyVisible = isCurrencyVisible;
+    });
+
+    if (isExpanded) {
+      _animationController.forward();
+    } else {
+      _animationController.value = 0;
+    }
+  }
+
+  Future<void> _saveHeaderState(bool isExpanded) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('header_expanded', isExpanded);
+  }
+
+  Future<void> _saveCurrencyState(bool isVisible) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('currency_visible', isVisible);
   }
 
   @override
@@ -50,9 +78,18 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
   void _toggleHeader() {
     if (_animationController.isCompleted) {
       _animationController.reverse();
+      _saveHeaderState(false);
     } else {
       _animationController.forward();
+      _saveHeaderState(true);
     }
+  }
+
+  void _toggleCurrencyVisibility() {
+    setState(() {
+      _isCurrencyVisible = !_isCurrencyVisible;
+      _saveCurrencyState(_isCurrencyVisible);
+    });
   }
   
   void _handleDragUpdate(DragUpdateDetails details) {
@@ -62,14 +99,18 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
 
   void _handleDragEnd(DragEndDetails details) {
     if (details.primaryVelocity! > 500) {
-      _animationController.forward(); // Buka paksa
+      _animationController.forward();
+      _saveHeaderState(true);
     } else if (details.primaryVelocity! < -500) {
-      _animationController.reverse(); // Tutup paksa
+      _animationController.reverse();
+      _saveHeaderState(false);
     } else {
       if (_animationController.value > 0.5) {
         _animationController.forward();
+        _saveHeaderState(true);
       } else {
         _animationController.reverse();
+        _saveHeaderState(false);
       }
     }
   }
@@ -109,11 +150,10 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
               );
             },
           ),
-          // Toggle Button
           InkWell(
             onTap: _toggleHeader,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: AnimatedRotation(
                 turns: _isHeaderExpanded ? 0 : 0.5,
                 duration: const Duration(milliseconds: 300),
@@ -131,7 +171,6 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
   }
 
   Widget _buildHeaderContent(Size media) {
-    // ... (Isi dari widget ini tidak berubah sama sekali)
     return Opacity(
       opacity: _heightAnimation.value,
       child: Stack(
@@ -148,44 +187,27 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                   painter: CustomArcPainter(end: 220),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10, top: 25),
-                child: Row(
-                  children: [
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Image.asset(
-                        "assets/img/settings.png",
-                        width: 25,
-                        height: 25,
-                        color: TColor.gray30,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(height: media.width * 0.05),
+              SizedBox(height: media.width * 0.02),
               Image.asset(
                 "assets/img/app_logo.png",
                 width: media.width * 0.25,
                 fit: BoxFit.contain,
               ),
-              SizedBox(height: media.width * 0.07),
+              SizedBox(height: media.width * 0.02),
               Text(
-                "\$1,235",
+                "10.235.000",
                 style: TextStyle(
                   color: TColor.white,
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 35,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: media.width * 0.055),
+              SizedBox(height: media.width * 0.05),
               Text(
                 "This month bills",
                 style: TextStyle(
@@ -194,64 +216,76 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: media.width * 0.07),
-              InkWell(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: TColor.border.withOpacity(0.15),
-                    ),
-                    color: TColor.gray60.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    "See your budget",
-                    style: TextStyle(
-                      color: TColor.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
+              SizedBox(height: media.width * 0.05),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(18),
             child: Column(
               children: [
                 const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: StatusButton(
-                        title: "Active subs",
-                        value: "12",
-                        statusColor: TColor.secondary,
-                        onPressed: () {},
-                      ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: TColor.gray.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: TColor.gray40.withOpacity(0.3),
+                      width: 1,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: StatusButton(
-                        title: "Highest subs",
-                        value: "\$19.99",
-                        statusColor: TColor.primary10,
-                        onPressed: () {},
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Total Balance",
+                              style: TextStyle(
+                                color: TColor.gray40,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: Text(
+                                _isCurrencyVisible ? "IDR 19.999.999" : "••••••",
+                                key: ValueKey<bool>(_isCurrencyVisible),
+                                style: TextStyle(
+                                  color: TColor.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: _isCurrencyVisible ? 0 : 2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: StatusButton(
-                        title: "Lowest subs",
-                        value: "\$5.99",
-                        statusColor: TColor.secondaryG,
-                        onPressed: () {},
+                      Container(
+                        decoration: BoxDecoration(
+                          color: TColor.primary10.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          onPressed: _toggleCurrencyVisibility,
+                          icon: Icon(
+                            _isCurrencyVisible 
+                              ? Icons.visibility_rounded 
+                              : Icons.visibility_off_rounded,
+                            color: TColor.primary10,
+                            size: 20,
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          constraints: const BoxConstraints(),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

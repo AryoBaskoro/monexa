@@ -68,37 +68,15 @@ class _CalenderViewState extends State<CalenderView> {
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Calender",
-                                    style: TextStyle(
-                                        color: TColor.gray30, fontSize: 16),
-                                  ),
-                                ],
-                              ),
-
-                              Row(
-                                children: [
-                                  Spacer(),
-                                  IconButton(
-                                      onPressed: () {
-                                        // Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsView() ) );
-                                      },
-                                      icon: Image.asset("assets/img/settings.png",
-                                          width: 25,
-                                          height: 25,
-                                          color: TColor.gray30))
-                                ],
-                              )
+                              
+                              
                             ],
                           ),
                           const SizedBox(
                             height: 20,
                           ),
                           Text(
-                            "Subs\nSchedule",
+                            "Calendar",
                             style: TextStyle(
                                 color: TColor.white,
                                 fontSize: 40,
@@ -158,8 +136,8 @@ class _CalenderViewState extends State<CalenderView> {
 
                     CalendarAgenda(
                       controller: calendarAgendaControllerNotAppBar,
-                     backgroundColor: Colors.transparent,
-                     fullCalendarBackgroundColor: TColor.gray80,
+                      backgroundColor: Colors.transparent,
+                      fullCalendarBackgroundColor: TColor.gray80,
                       
                       locale: 'en',
                       weekDay: WeekDay.short,
