@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 import 'package:monexa_app/widgets/custom_arc_painter.dart';
-import 'package:monexa_app/widgets/status_button.dart';
 
 class CollapsibleHeader extends StatefulWidget {
   const CollapsibleHeader({super.key});
@@ -131,7 +130,6 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
   }
 
   Widget _buildHeaderContent(Size media) {
-    // ... (Isi dari widget ini tidak berubah sama sekali)
     return Opacity(
       opacity: _heightAnimation.value,
       child: Stack(
@@ -217,44 +215,6 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                 ),
               ),
             ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: StatusButton(
-                        title: "Active subs",
-                        value: "12",
-                        statusColor: TColor.secondary,
-                        onPressed: () {},
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: StatusButton(
-                        title: "Highest subs",
-                        value: "\$19.99",
-                        statusColor: TColor.primary10,
-                        onPressed: () {},
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: StatusButton(
-                        title: "Lowest subs",
-                        value: "\$5.99",
-                        statusColor: TColor.secondaryG,
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
         ],
       ),
