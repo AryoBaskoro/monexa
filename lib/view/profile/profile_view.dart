@@ -35,7 +35,7 @@ class _ProfileViewState extends State<ProfileView> {
       "isPositive": false,
     },
     {
-      "title": "Available Money",
+      "title": "Total Balance",
       "amount": 1349.50,
       "icon": "assets/img/creditcards.png", 
       "color": TColor.primary,
@@ -75,34 +75,7 @@ class _ProfileViewState extends State<ProfileView> {
       ),
       child: Column(
         children: [
-          // Settings button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Profile",
-                  style: TextStyle(
-                    color: TColor.gray30,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Image.asset(
-                    "assets/img/settings.png",
-                    width: 25,
-                    height: 25,
-                    color: TColor.gray30,
-                  ),
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: 20),
-          // User Avatar
           Container(
             width: 100,
             height: 100,

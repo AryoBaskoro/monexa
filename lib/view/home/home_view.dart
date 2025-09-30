@@ -13,7 +13,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  bool isTransactionHistory = true;
+  bool isSubscription = true;
 
   final List subArr = [
     {"name": "Spotify", "icon": "assets/img/spotify_logo.png", "price": "5.99"},
@@ -22,47 +22,15 @@ class _HomeViewState extends State<HomeView> {
     {"name": "NetFlix", "icon": "assets/img/netflix_logo.png", "price": "15.00"},
   ];
 
-  // Upcoming bills data
   final List bilArr = [
-    {
-      "name": "Electric Bill",
-      "date": DateTime(2025, 10, 5),
-      "amount": 89.50,
-    },
-    {
-      "name": "Internet Service",
-      "date": DateTime(2025, 10, 8),
-      "amount": 55.99,
-    },
-    {
-      "name": "Phone Bill",
-      "date": DateTime(2025, 10, 12),
-      "amount": 45.00,
-    },
-    {
-      "name": "Credit Card Payment",
-      "date": DateTime(2025, 10, 15),
-      "amount": 235.80,
-    },
-    {
-      "name": "Car Insurance",
-      "date": DateTime(2025, 10, 20),
-      "amount": 125.00,
-    },
-    {
-      "name": "Microsoft OneDrive",
-      "date": DateTime(2025, 10, 28),
-      "amount": 29.99,
-    },
+    {"name": "Spotify", "date": DateTime(2025, 10, 25), "price": "5.99"},
+    {"name": "YouTube Premium", "date": DateTime(2025, 10, 25), "price": "18.99"},
+    {"name": "Microsoft OneDrive", "date": DateTime(2025, 10, 28), "price": "29.99"},
+    {"name": "NetFlix", "date": DateTime(2025, 11, 5), "price": "15.00"}
   ];
 
   @override
   Widget build(BuildContext context) {
-    // Sort transactions by date (latest first)
-    transactionArr.sort((a, b) => b["date"].compareTo(a["date"]));
-    // Sort bills by date (nearest first)
-    bilArr.sort((a, b) => a["date"].compareTo(b["date"]));
-    
     return Scaffold(
       backgroundColor: TColor.gray,
       body: Column(
@@ -117,24 +85,24 @@ class _HomeViewState extends State<HomeView> {
           opacity: animation,
           child: SlideTransition(
             position: Tween<Offset>(
-              begin: Offset(isTransactionHistory ? -0.1 : 0.1, 0),
+              begin: Offset(isSubscription ? -0.1 : 0.1, 0),
               end: Offset.zero,
             ).animate(animation),
             child: child,
           ),
         );
       },
-      child: isTransactionHistory
-          ? _buildTransactionHistoryList()
+      child: isSubscription
+          ? _buildSubscriptionList()
           : _buildUpcomingBillsList(),
     );
   }
 
-  Widget _buildTransactionHistoryList() {
+  Widget _buildSubscriptionList() {
     return ListView.builder(
-      key: const ValueKey('transaction_history_list'),
+      key: const ValueKey('subscription_list'),
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: transactionArr.length,
+      itemCount: subArr.length,
       itemBuilder: (context, index) {
         var sObj = subArr[index] as Map? ?? {};
         return HistoryList(
