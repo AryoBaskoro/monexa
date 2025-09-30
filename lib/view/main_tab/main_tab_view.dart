@@ -4,7 +4,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:monexa_app/widgets/transaction_fab.dart';
 import '../../common/color_extension.dart';
 import '../calender/calender_view.dart';
-import '../card/cards_view.dart';
+import '../profile/profile_view.dart';
 import '../home/home_view.dart';
 
 class MainTabView extends StatefulWidget {
@@ -23,7 +23,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
     const HomeView(),
     Container(color: TColor.gray), // Placeholder untuk 'Budget'
     const CalenderView(),
-    const CardsView(),
+    const ProfileView(),
   ];
 
   @override
@@ -122,7 +122,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
                     GButton(icon: Icons.home_rounded, text: 'Home'),
                     GButton(icon: Icons.account_balance_wallet_rounded, text: 'Budget'),
                     GButton(icon: Icons.calendar_month_rounded, text: 'Calendar'),
-                    GButton(icon: Icons.credit_card_rounded, text: 'Cards'),
+                    GButton(icon: Icons.person_rounded, text: 'Profile'),
                   ],
                 ),
               ),
