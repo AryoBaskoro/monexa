@@ -5,6 +5,7 @@ import 'package:monexa_app/view/statistic/statistic_view.dart';
 import 'package:monexa_app/widgets/transaction_fab.dart';
 import '../../common/color_extension.dart';
 import '../calender/calender_view.dart';
+import '../profile/profile_view.dart';
 import '../home/home_view.dart';
 
 class MainTabView extends StatefulWidget {
@@ -23,7 +24,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
     const HomeView(),
     const StatisticView(), 
     const CalenderView(),
-    Container(color: TColor.gray),
+    const ProfileView(),
   ];
 
   @override
