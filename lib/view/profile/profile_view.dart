@@ -13,14 +13,10 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin {
   late AnimationController _animationController;
 
-  // Mock user data
   final Map<String, dynamic> userData = {
     "name": "Kelompok 5",
     "email": "kelompok5@gmail.com",
     "avatar": "assets/img/u1.png",
-    "totalIncome": 5240.00,
-    "totalExpenses": 3890.50,
-    "totalMoney": 1349.50,
   };
 
   final List<Map<String, dynamic>> financialStats = [
@@ -148,11 +144,11 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildSummaryItem("Income", userData["totalIncome"], Colors.green),
+                _buildSummaryItem("Income", financialStats[0]["amount"], Colors.green),
                 Container(width: 1, height: 40, color: TColor.gray50),
-                _buildSummaryItem("Expenses", userData["totalExpenses"], Colors.red),
+                _buildSummaryItem("Expenses", financialStats[1]["amount"], Colors.red),
                 Container(width: 1, height: 40, color: TColor.gray50),
-                _buildSummaryItem("Balance", userData["totalMoney"], TColor.primary),
+                _buildSummaryItem("Balance", financialStats[2]["amount"], TColor.primary),
               ],
             ),
           ],
