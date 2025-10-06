@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 import 'package:monexa_app/view/login/sign_in_view.dart';
-import 'package:monexa_app/widgets/animated_entry.dart'; // <-- Menggunakan widget Anda
+import 'package:monexa_app/widgets/animated_entry.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -50,30 +50,30 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            AnimatedEntry( // <-- Penggunaan widget Anda
+            AnimatedEntry( 
               index: 0,
               controller: _animationController,
               child: _buildProfileHeader(media),
             ),
-            const SizedBox(height: 25),
-            AnimatedEntry( // <-- Penggunaan widget Anda
+            const SizedBox(height: 20),
+            AnimatedEntry( 
               index: 1,
               controller: _animationController,
               child: _buildFinancialSummary(),
             ),
-            const SizedBox(height: 25),
-            AnimatedEntry( // <-- Penggunaan widget Anda
+            const SizedBox(height: 20),
+            AnimatedEntry( 
               index: 2,
               controller: _animationController,
               child: _buildFinancialStats(),
             ),
             const SizedBox(height: 10),
-            AnimatedEntry( // <-- Penggunaan widget Anda
+            AnimatedEntry( 
               index: 3,
               controller: _animationController,
               child: _buildLogoutButton(),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -83,7 +83,7 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
   Widget _buildProfileHeader(Size media) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(top: 40, bottom: 30),
+      padding: const EdgeInsets.only(top: 30, bottom: 30),
       decoration: BoxDecoration(
         color: TColor.gray70.withOpacity(0.5),
         borderRadius: const BorderRadius.only(
@@ -139,8 +139,8 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
         ),
         child: Column(
           children: [
-            Text("Financial Overview", style: TextStyle(color: TColor.white, fontSize: 18, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 20),
+            // Text("Financial Overview", style: TextStyle(color: TColor.white, fontSize: 18, fontWeight: FontWeight.w600)),
+            // const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -248,7 +248,6 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
   }
 }
 
-// Helper widget for subtle nested animations (kept for better UI)
 class _SubtleAnimatedEntry extends StatelessWidget {
   final int delay;
   final Widget child;

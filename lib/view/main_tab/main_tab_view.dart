@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:monexa_app/view/promo/promo_view.dart';
 import 'package:monexa_app/view/statistic/statistic_view.dart';
 import 'package:monexa_app/widgets/transaction_fab.dart';
 import '../../common/color_extension.dart';
@@ -24,6 +25,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
     const HomeView(),
     const StatisticView(), 
     const CalenderView(),
+    const PromoView(),
     const ProfileView(),
   ];
 
@@ -123,6 +125,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
                     GButton(icon: Icons.home_rounded, text: 'Home'),
                     GButton(icon: Icons.bar_chart_rounded, text: 'Statistic'),
                     GButton(icon: Icons.calendar_month_rounded, text: 'Calendar'),
+                    GButton(icon: Icons.local_offer_rounded, text: 'Promo'),
                     GButton(icon: Icons.person_rounded, text: 'Profile'),
                   ],
                 ),
