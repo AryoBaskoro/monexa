@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Make sure to import the intl package
 import 'package:monexa_app/common/color_extension.dart';
 import 'package:monexa_app/widgets/spending_chart_painter.dart';
 
 enum DateFilter { week, month, year }
 enum SortType { ascending, descending }
+
+// --- HELPER FUNCTION for currency formatting ---
+String _formatCurrency(dynamic amount) {
+  if (amount is! num) {
+    return 'Rp 0';
+  }
+  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+  return format.format(amount);
+}
 
 class StatisticView extends StatefulWidget {
   const StatisticView({super.key});
@@ -22,7 +32,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   SortType _sortType = SortType.descending;
   bool _isChartMinimized = false;
 
-  // --- MOCK DATA untuk berbagai filter ---
   final Map<DateFilter, List<ChartData>> chartDataByFilter = {
     DateFilter.week: [
       ChartData(color: Colors.pink.shade300, value: 15),
@@ -54,19 +63,21 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     ],
   };
 
+  // FIXED: Updated total amounts to a more appropriate format
   final Map<DateFilter, String> totalAmountByFilter = {
-    DateFilter.week: "IDR 5.8M",
-    DateFilter.month: "IDR 27M",
-    DateFilter.year: "IDR 205M",
+    DateFilter.week: "Rp 5,8 Jt",
+    DateFilter.month: "Rp 27 Jt",
+    DateFilter.year: "Rp 205 Jt",
   };
 
+  // FIXED: Updated category amounts to realistic Rupiah values
   List<Map<String, dynamic>> categoryItems = [
-    {'name': 'Food & Drinks', 'icon': Icons.fastfood_rounded, 'color': Colors.orange, 'amount': 250.00},
-    {'name': 'Shopping', 'icon': Icons.shopping_bag_rounded, 'color': Colors.pink, 'amount': 420.50},
-    {'name': 'Transportation', 'icon': Icons.directions_car_rounded, 'color': Colors.blue, 'amount': 85.70},
-    {'name': 'Entertainment', 'icon': Icons.movie_rounded, 'color': Colors.purple, 'amount': 150.00},
-    {'name': 'Bills & Utilities', 'icon': Icons.receipt_long_rounded, 'color': Colors.red, 'amount': 320.00},
-    {'name': 'Healthcare', 'icon': Icons.local_hospital_rounded, 'color': Colors.green, 'amount': 180.25},
+    {'name': 'Food & Drinks', 'icon': Icons.fastfood_rounded, 'color': Colors.orange, 'amount': 250000.0},
+    {'name': 'Shopping', 'icon': Icons.shopping_bag_rounded, 'color': Colors.pink, 'amount': 420500.0},
+    {'name': 'Transportation', 'icon': Icons.directions_car_rounded, 'color': Colors.blue, 'amount': 85700.0},
+    {'name': 'Entertainment', 'icon': Icons.movie_rounded, 'color': Colors.purple, 'amount': 150000.0},
+    {'name': 'Bills & Utilities', 'icon': Icons.receipt_long_rounded, 'color': Colors.red, 'amount': 320000.0},
+    {'name': 'Healthcare', 'icon': Icons.local_hospital_rounded, 'color': Colors.green, 'amount': 180250.0},
   ];
 
   @override
@@ -130,10 +141,8 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   void _handleVerticalDragUpdate(DragUpdateDetails details) {
     setState(() {
       _dragOffset += details.delta.dy;
-      // Clamp between -100 and 100 for smooth tracking
       _dragOffset = _dragOffset.clamp(-100.0, 100.0);
       
-      // Update animation based on drag
       if (!_isChartMinimized && _dragOffset < 0) {
         _minimizeController.value = (-_dragOffset / 100).clamp(0.0, 1.0);
       } else if (_isChartMinimized && _dragOffset > 0) {
@@ -145,7 +154,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   void _handleVerticalDragEnd(DragEndDetails details) {
     final velocity = details.primaryVelocity ?? 0;
     
-    // Swipe up (velocity negative) -> minimize
     if (velocity < -300 && !_isChartMinimized) {
       setState(() {
         _isChartMinimized = true;
@@ -153,7 +161,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
       });
       _minimizeController.forward();
     }
-    // Swipe down (velocity positive) -> expand
     else if (velocity > 300 && _isChartMinimized) {
       setState(() {
         _isChartMinimized = false;
@@ -161,7 +168,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
       });
       _minimizeController.reverse();
     }
-    // Snap back based on current position
     else if (_minimizeController.value > 0.5 && !_isChartMinimized) {
       setState(() {
         _isChartMinimized = true;
@@ -175,7 +181,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
       });
       _minimizeController.reverse();
     } else {
-      // Snap back to original state
       setState(() {
         _dragOffset = 0;
       });
@@ -189,6 +194,14 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    // --- DYNAMIC DATA CALCULATION ---
+    final double totalExpense = categoryItems.fold(0.0, (sum, item) => sum + (item['amount'] as double));
+    final Map<String, dynamic> highestExpenseItem = categoryItems.isNotEmpty ? categoryItems.reduce((a, b) => a['amount'] > b['amount'] ? a : b) : {};
+    final double highestExpense = highestExpenseItem.isNotEmpty ? highestExpenseItem['amount'] : 0.0;
+    final String mostUsedCategoryName = highestExpenseItem.isNotEmpty ? highestExpenseItem['name'] : 'N/A';
+    final IconData mostUsedCategoryIcon = highestExpenseItem.isNotEmpty ? highestExpenseItem['icon'] : Icons.question_mark;
+    const double totalIncome = 30000000.0; // Mock Rp 30 Jt for demonstration
+
     return Scaffold(
       backgroundColor: TColor.gray,
       body: SingleChildScrollView(
@@ -200,9 +213,9 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  // Summary section hanya muncul jika chart di-minimize
                   if (!_isChartMinimized) ...[
-                    _buildSummarySection(),
+                    // Pass dynamic data to the summary section
+                    _buildSummarySection(totalExpense, highestExpense, totalIncome, mostUsedCategoryName, mostUsedCategoryIcon),
                     const SizedBox(height: 20),
                   ],
                   _buildCategoryListSection(),
@@ -219,6 +232,14 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     final currentChartData = chartDataByFilter[_selectedDateFilter]!;
     final currentTotalAmount = totalAmountByFilter[_selectedDateFilter]!;
 
+    // --- DYNAMIC DATA CALCULATION for minimized view ---
+    final double totalExpense = categoryItems.fold(0.0, (sum, item) => sum + (item['amount'] as double));
+    final Map<String, dynamic> highestExpenseItem = categoryItems.isNotEmpty ? categoryItems.reduce((a, b) => a['amount'] > b['amount'] ? a : b) : {};
+    final double highestExpense = highestExpenseItem.isNotEmpty ? highestExpenseItem['amount'] : 0.0;
+    final String mostUsedCategoryName = highestExpenseItem.isNotEmpty ? highestExpenseItem['name'] : 'N/A';
+    final IconData mostUsedCategoryIcon = highestExpenseItem.isNotEmpty ? highestExpenseItem['icon'] : Icons.question_mark;
+    const double totalIncome = 30000000.0;
+
     return GestureDetector(
       onVerticalDragUpdate: _handleVerticalDragUpdate,
       onVerticalDragEnd: _handleVerticalDragEnd,
@@ -230,7 +251,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             curve: Curves.easeInOutCubic,
             padding: EdgeInsets.fromLTRB(
               20,
-              20,
+              40, // Added padding for status bar
               20,
               _isChartMinimized ? 16 : 10,
             ),
@@ -244,11 +265,10 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             child: Column(
               children: [
                 if (_isChartMinimized)
-                  _buildMinimizedChart(currentChartData, currentTotalAmount)
+                  _buildMinimizedChart(currentChartData, currentTotalAmount, totalExpense, highestExpense, totalIncome, mostUsedCategoryName, mostUsedCategoryIcon)
                 else
                   _buildExpandedChart(currentChartData, currentTotalAmount),
                 
-                // Bar indicator untuk swipe
                 const SizedBox(height: 12),
                 _buildSwipeBarIndicator(),
               ],
@@ -272,10 +292,9 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     );
   }
 
-  Widget _buildMinimizedChart(List<ChartData> chartData, String totalAmount) {
+  Widget _buildMinimizedChart(List<ChartData> chartData, String totalAmount, double totalExpense, double highestExpense, double totalIncome, String categoryName, IconData categoryIcon) {
     return Row(
       children: [
-        // Mini Chart
         Container(
           width: 100,
           height: 100,
@@ -304,15 +323,15 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
           ),
         ),
         const SizedBox(width: 20),
-        // Summary Grid
         Expanded(
-          child: _buildMiniSummaryGrid(totalAmount),
+          // Pass dynamic data to the mini summary grid
+          child: _buildMiniSummaryGrid(totalExpense, highestExpense, totalIncome, categoryName, categoryIcon),
         ),
       ],
     );
   }
 
-  Widget _buildMiniSummaryGrid(String totalAmount) {
+  Widget _buildMiniSummaryGrid(double totalExpense, double highestExpense, double totalIncome, String categoryName, IconData categoryIcon) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.95),
@@ -324,13 +343,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             children: [
               _buildMiniGridItem(
                 "Total Expense",
-                "\$20000",
+                _formatCurrency(totalExpense),
                 showRightBorder: true,
                 showBottomBorder: true,
               ),
               _buildMiniGridItem(
                 "Highest Expense",
-                "\$20000",
+                _formatCurrency(highestExpense),
                 showBottomBorder: true,
               ),
             ],
@@ -339,13 +358,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             children: [
               _buildMiniGridItem(
                 "Total Income",
-                "\$20000",
+                _formatCurrency(totalIncome),
                 showRightBorder: true,
               ),
               _buildMiniGridItem(
                 "Most Category",
-                "Food",
-                icon: Icons.fastfood_outlined,
+                categoryName,
+                icon: categoryIcon,
               ),
             ],
           ),
@@ -479,7 +498,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Total Amount",
+                  "Total Expenses",
                   style: TextStyle(color: TColor.gray30, fontSize: 14),
                 ),
               ],
@@ -513,17 +532,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.grey.shade100,
+          color: isSelected ? TColor.primary : TColor.gray60.withOpacity(0.2),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? Colors.white : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.black87 : Colors.grey.shade600,
+            color: isSelected ? Colors.white : TColor.gray30,
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
@@ -532,7 +547,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     );
   }
 
-  Widget _buildSummarySection() {
+  Widget _buildSummarySection(double totalExpense, double highestExpense, double totalIncome, String categoryName, IconData categoryIcon) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -543,14 +558,14 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
         children: [
           Row(
             children: [
-              _buildGridItem("Total Expense", "\$20000", showRightBorder: true, showBottomBorder: true),
-              _buildGridItem("Highest Expense", "\$20000", showBottomBorder: true),
+              _buildGridItem("Total Expense", _formatCurrency(totalExpense), showRightBorder: true, showBottomBorder: true),
+              _buildGridItem("Highest Expense", _formatCurrency(highestExpense), showBottomBorder: true),
             ],
           ),
           Row(
             children: [
-              _buildGridItem("Total Income", "\$20000", showRightBorder: true),
-              _buildGridItem("Most Used Category", "Food", icon: Icons.fastfood_outlined),
+              _buildGridItem("Total Income", _formatCurrency(totalIncome), showRightBorder: true),
+              _buildGridItem("Most Used Category", categoryName, icon: categoryIcon),
             ],
           ),
         ],
@@ -678,8 +693,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   }
 }
 
-// --- WIDGET HELPER ---
-
 class _CategoryListItem extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -716,7 +729,8 @@ class _CategoryListItem extends StatelessWidget {
             ),
           ),
           Text(
-            "-\$${amount.toStringAsFixed(2)}",
+            // FIXED: Using the currency formatter
+            "-${_formatCurrency(amount)}",
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.redAccent,
