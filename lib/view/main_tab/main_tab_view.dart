@@ -23,7 +23,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
 
   final List<Widget> _views = [
     const HomeView(),
-    const StatisticView(), 
+    const StatisticView(),
     const CalenderView(),
     const PromoView(),
     const ProfileView(),
@@ -84,43 +84,54 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
     );
   }
 
+  // --- WIDGET YANG DIDESAIN ULANG ---
   Widget _buildBottomNavBar() {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        // Padding lebih besar untuk efek "floating"
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             const Padding(
-              padding: EdgeInsets.only(right: 16, bottom: 8),
-              child: TransactionFAB(), 
+              padding: EdgeInsets.only(right: 16, bottom: 12),
+              child: TransactionFAB(),
             ),
             Container(
               decoration: BoxDecoration(
-                color: TColor.gray70,
-                borderRadius: BorderRadius.circular(30),
+                // Warna latar belakang yang bersih (putih)
+                color: Colors.white,
+                // Radius lebih besar untuk bentuk kapsul yang modern
+                borderRadius: BorderRadius.circular(50),
+                // Shadow yang lebih lembut dan tersebar
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withOpacity(0.1),
                     blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    spreadRadius: 1,
                   ),
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                // Padding di dalam container untuk GNav
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                 child: GNav(
                   selectedIndex: _selectTab,
                   onTabChange: _onTabChanged,
+                  // --- STYLE BARU ---
+                  rippleColor: TColor.primary.withOpacity(0.1),
+                  hoverColor: TColor.primary.withOpacity(0.05),
                   gap: 8,
-                  activeColor: TColor.white,
-                  color: TColor.gray30,
+                  // Warna ikon dan teks saat aktif (putih agar kontras dengan background)
+                  activeColor: Colors.white,
                   iconSize: 24,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   duration: const Duration(milliseconds: 400),
-                  tabBackgroundColor: TColor.primary.withOpacity(0.15),
-                  tabBorderRadius: 20,
+                  // Background tab yang aktif menggunakan warna primer
+                  tabBackgroundColor: TColor.primary,
+                  // Warna ikon saat tidak aktif
+                  color: TColor.gray40,
                   tabs: const [
                     GButton(icon: Icons.home_rounded, text: 'Home'),
                     GButton(icon: Icons.bar_chart_rounded, text: 'Statistic'),
