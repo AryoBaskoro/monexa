@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
 import 'package:monexa_app/view/login/sign_in_view.dart';
 import 'package:monexa_app/widgets/animated_entry.dart';
+import 'package:intl/intl.dart'; // It's good practice to use the intl package for formatting
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -19,10 +20,11 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
     "avatar": "assets/img/u1.png",
   };
 
+  // Updated financial stats with reasonable Rupiah amounts
   final List<Map<String, dynamic>> financialStats = [
-    {"title": "Total Income", "amount": 5240.00, "icon": "assets/img/money.png", "color": Colors.green, "isPositive": true},
-    {"title": "Total Expenses", "amount": 3890.50, "icon": "assets/img/chart.png", "color": Colors.red, "isPositive": false},
-    {"title": "Total Balance", "amount": 1349.50, "icon": "assets/img/creditcards.png", "color": TColor.primary, "isPositive": true},
+    {"title": "Total Income", "amount": 8500000.00, "icon": "assets/img/money.png", "color": Colors.green, "isPositive": true},
+    {"title": "Total Expenses", "amount": 5250000.00, "icon": "assets/img/chart.png", "color": Colors.red, "isPositive": false},
+    {"title": "Total Balance", "amount": 3250000.00, "icon": "assets/img/creditcards.png", "color": TColor.primary, "isPositive": true},
   ];
 
   @override
@@ -39,6 +41,12 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+  
+  // Helper function to format currency for Indonesian Rupiah
+  String _formatCurrency(double amount) {
+    final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+    return format.format(amount);
   }
 
   @override
@@ -139,8 +147,6 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
         ),
         child: Column(
           children: [
-            // Text("Financial Overview", style: TextStyle(color: TColor.white, fontSize: 18, fontWeight: FontWeight.w600)),
-            // const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -162,7 +168,8 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
       children: [
         Text(title, style: TextStyle(color: TColor.gray40, fontSize: 12, fontWeight: FontWeight.w500)),
         const SizedBox(height: 8),
-        Text("\$${amount.toStringAsFixed(2)}", style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700)),
+        // Updated currency format
+        Text(_formatCurrency(amount), style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w600)),
       ],
     );
   }
@@ -206,7 +213,8 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
               children: [
                 Text(stat["title"], style: TextStyle(color: TColor.gray30, fontSize: 12, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
-                Text("\$${stat["amount"].toStringAsFixed(2)}", style: TextStyle(color: TColor.white, fontSize: 16, fontWeight: FontWeight.w700)),
+                // Updated currency format
+                Text(_formatCurrency(stat["amount"]), style: TextStyle(color: TColor.white, fontSize: 16, fontWeight: FontWeight.w700)),
               ],
             ),
           ),

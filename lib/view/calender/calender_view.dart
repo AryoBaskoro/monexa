@@ -2,10 +2,20 @@ import 'dart:math';
 
 import 'package:calendar_agenda/calendar_agenda.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Make sure to import intl package
 import 'package:monexa_app/common/color_extension.dart';
-// import 'package:monexa_app/view/settings/settings_view.dart';
 
 import '../../widgets/subscription_cell.dart';
+
+// Helper function to format currency for Indonesian Rupiah
+String _formatCurrency(dynamic amount) {
+  if (amount is! num) {
+    return 'Rp 0'; 
+  }
+  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+  return format.format(amount);
+}
+
 
 class CalenderView extends StatefulWidget {
   const CalenderView({super.key});
@@ -21,19 +31,20 @@ class _CalenderViewState extends State<CalenderView> {
 
   Random random = new Random();
 
+  // FIXED: Updated prices to double and used reasonable Rupiah amounts
   List subArr = [
-    {"name": "Spotify", "icon": "assets/img/spotify_logo.png", "price": "5.99"},
+    {"name": "Spotify", "icon": "assets/img/spotify_logo.png", "price": 54900.0},
     {
       "name": "YouTube Premium",
       "icon": "assets/img/youtube_logo.png",
-      "price": "18.99"
+      "price": 59000.0
     },
     {
       "name": "Microsoft OneDrive",
       "icon": "assets/img/onedrive_logo.png",
-      "price": "29.99"
+      "price": 95999.0
     },
-    {"name": "NetFlix", "icon": "assets/img/netflix_logo.png", "price": "15.00"}
+    {"name": "NetFlix", "icon": "assets/img/netflix_logo.png", "price": 120000.0}
   ];
 
     @override
@@ -45,6 +56,10 @@ class _CalenderViewState extends State<CalenderView> {
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.sizeOf(context);
+    
+    // ADDED: Calculate total price dynamically
+    double totalPrice = subArr.fold(0.0, (sum, item) => sum + (item["price"] as num));
+
     return Scaffold(
       backgroundColor: TColor.gray,
       body: SingleChildScrollView(
@@ -89,7 +104,8 @@ class _CalenderViewState extends State<CalenderView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "3 subscription for today",
+                                // FIXED: Made subscription count dynamic
+                                "${subArr.length} subscriptions this month",
                                 style: TextStyle(
                                     color: TColor.gray30,
                                     fontSize: 14,
@@ -114,7 +130,8 @@ class _CalenderViewState extends State<CalenderView> {
                                   child: Row(
                                     children: [
                                       Text(
-                                        "January",
+                                        // FIXED: Month name is now dynamic
+                                        DateFormat('MMMM').format(selectedDateNotAppBBar),
                                         style: TextStyle(
                                             color: TColor.white,
                                             fontSize: 12,
@@ -204,14 +221,16 @@ class _CalenderViewState extends State<CalenderView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "January",
+                        // FIXED: Month name is now dynamic
+                        DateFormat('MMMM').format(selectedDateNotAppBBar),
                         style: TextStyle(
                             color: TColor.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "\$24.98",
+                        // FIXED: Total price is now dynamic and formatted
+                        _formatCurrency(totalPrice),
                         style: TextStyle(
                             color: TColor.white,
                             fontSize: 20,
@@ -223,7 +242,8 @@ class _CalenderViewState extends State<CalenderView> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "01.08.2023",
+                        // FIXED: Date is now dynamic and formatted
+                        DateFormat('dd.MM.yyyy').format(selectedDateNotAppBBar),
                         style: TextStyle(
                             color: TColor.gray30,
                             fontSize: 12,

@@ -1,6 +1,17 @@
-import 'package:flutter/material.dart';
+// lib/widgets/history_list.dart
 
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; 
 import '../common/color_extension.dart';
+
+// Helper function to format currency for Indonesian Rupiah
+String _formatCurrency(dynamic amount) {
+  if (amount is! num) {
+    return 'Rp 0'; 
+  }
+  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+  return format.format(amount);
+}
 
 class HistoryList extends StatelessWidget {
   final Map sObj;
@@ -18,7 +29,7 @@ class HistoryList extends StatelessWidget {
         onTap: onPressed,
         child: Container(
           height: 64,
-           padding: const EdgeInsets.all( 10),
+            padding: const EdgeInsets.all( 10),
           decoration: BoxDecoration(
             border: Border.all(
               color: TColor.border.withOpacity(0.15),
@@ -52,7 +63,8 @@ class HistoryList extends StatelessWidget {
                 width: 8,
               ),
               Text(
-                "\$${sObj["price"]}",
+                // FIXED: Now uses the currency formatting function
+                _formatCurrency(sObj["price"]),
                 style: TextStyle(
                     color: TColor.white,
                     fontSize: 14,

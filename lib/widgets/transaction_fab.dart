@@ -5,7 +5,6 @@ import 'package:monexa_app/widgets/transaction_modal.dart';
 class TransactionFAB extends StatelessWidget {
   const TransactionFAB({super.key});
 
-  // Fungsi untuk menampilkan modal bottom sheet
   void _showAddTransactionModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -21,7 +20,6 @@ class TransactionFAB extends StatelessWidget {
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        // Desain gradien dan bayangan dipertahankan
         gradient: LinearGradient(
           colors: [
             TColor.primary,
@@ -44,7 +42,6 @@ class TransactionFAB extends StatelessWidget {
         child: InkWell(
           onTap: () => _showAddTransactionModal(context),
           customBorder: const CircleBorder(),
-          // Animasi rotasi dihapus, diganti dengan ikon statis
           child: Icon(
             Icons.add_rounded,
             color: TColor.white,

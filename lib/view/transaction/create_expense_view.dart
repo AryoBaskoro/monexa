@@ -91,7 +91,7 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
                       index: 3,
                       controller: _animationController,
                       child: CheckboxText(
-                        label: "Tandai sebagai pengeluaran rutin",
+                        label: "Set as a recurring monthly expense",
                         value: _isRecurring,
                         activeColor: TColor.secondary,
                         onChanged: (newValue) {

@@ -19,7 +19,6 @@ class TransactionModal extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Drag handle
           Container(
             margin: const EdgeInsets.only(top: 12),
             width: 65,

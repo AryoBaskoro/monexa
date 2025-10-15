@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; 
 
 import '../common/color_extension.dart';
+
+String _formatCurrency(dynamic amount) {
+  if (amount is! num) {
+    return 'Rp 0'; 
+  }
+  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+  return format.format(amount);
+}
 
 class SubScriptionCell extends StatelessWidget {
   final Map sObj;
@@ -45,7 +54,8 @@ class SubScriptionCell extends StatelessWidget {
               width: 8,
             ),
             Text(
-              "\$${sObj["price"]}",
+              // Updated currency format here
+              _formatCurrency(sObj["price"]),
               style: TextStyle(
                   color: TColor.white,
                   fontSize: 20,

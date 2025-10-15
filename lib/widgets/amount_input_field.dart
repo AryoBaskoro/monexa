@@ -1,6 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../common/color_extension.dart'; // Sesuaikan path jika perlu
+import 'package:intl/intl.dart'; // You need to import the intl package
+import '../common/color_extension.dart'; 
+
+// A custom formatter for Indonesian Rupiah
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    // Remove all non-digit characters
+    String sanitizedText = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+
+    if (sanitizedText.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+    
+    // Parse the number
+    num value = num.tryParse(sanitizedText) ?? 0;
+
+    // Format using Indonesian locale for dot separators
+    final formatter = NumberFormat.decimalPattern('id_ID');
+    String newText = formatter.format(value);
+
+    // Return the formatted value and update cursor position to the end
+    return TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
 
 class AmountInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -9,7 +44,7 @@ class AmountInputField extends StatelessWidget {
   const AmountInputField({
     super.key,
     required this.controller,
-    this.currencySymbol = '\$',
+    this.currencySymbol = 'Rp', // Changed default to 'Rp'
   });
 
   @override
@@ -35,9 +70,13 @@ class AmountInputField extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              // Use number keyboard without decimals
+              keyboardType: TextInputType.number, 
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                // This ensures only digits are entered
+                FilteringTextInputFormatter.digitsOnly,
+                // This formats the digits with dot separators
+                CurrencyInputFormatter(), 
               ],
               style: const TextStyle(
                 color: Colors.white,

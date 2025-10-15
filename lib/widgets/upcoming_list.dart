@@ -1,7 +1,19 @@
+// lib/widgets/upcoming_list.dart
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../common/color_extension.dart';
+
+// ADDED: The currency formatting function
+String _formatCurrency(dynamic amount) {
+  if (amount is! num) {
+    return 'Rp 0';
+  }
+  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+  return format.format(amount);
+}
+
 
 class UpcomingList extends StatelessWidget {
   final Map sObj;
@@ -90,7 +102,8 @@ class UpcomingList extends StatelessWidget {
                 width: 8,
               ),
               Text(
-                "-\$${sObj["amount"]?.toStringAsFixed(2) ?? sObj["price"] ?? '0.00'}",
+                // FIXED: Removed '$' and now uses the formatter
+                "-${_formatCurrency(sObj["price"])}",
                 style: TextStyle(
                     color: Colors.red,
                     fontSize: 16,

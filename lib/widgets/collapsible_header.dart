@@ -253,7 +253,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 200),
                               child: Text(
-                                _isCurrencyVisible ? "IDR 19.999.999" : "••••••",
+                                _isCurrencyVisible ? "Rp 19.999.999" : "••••••",
                                 key: ValueKey<bool>(_isCurrencyVisible),
                                 style: TextStyle(
                                   color: TColor.white,

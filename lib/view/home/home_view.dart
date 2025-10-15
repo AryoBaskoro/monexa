@@ -16,17 +16,17 @@ class _HomeViewState extends State<HomeView> {
   bool isSubscription = true;
 
   final List subArr = [
-    {"name": "Spotify", "icon": "assets/img/spotify_logo.png", "price": "5.99"},
-    {"name": "YouTube Premium", "icon": "assets/img/youtube_logo.png", "price": "18.99"},
-    {"name": "Microsoft OneDrive", "icon": "assets/img/onedrive_logo.png", "price": "29.99"},
-    {"name": "NetFlix", "icon": "assets/img/netflix_logo.png", "price": "15.00"},
+    {"name": "Spotify", "icon": "assets/img/spotify_logo.png", "price": 55000},
+    {"name": "YouTube Premium", "icon": "assets/img/youtube_logo.png", "price": 59000},
+    {"name": "Microsoft OneDrive", "icon": "assets/img/onedrive_logo.png", "price": 32000},
+    {"name": "Netflix", "icon": "assets/img/netflix_logo.png", "price": 65000},
   ];
 
   final List bilArr = [
-    {"name": "Spotify", "date": DateTime(2025, 10, 25), "price": "5.99"},
-    {"name": "YouTube Premium", "date": DateTime(2025, 10, 25), "price": "18.99"},
-    {"name": "Microsoft OneDrive", "date": DateTime(2025, 10, 28), "price": "29.99"},
-    {"name": "NetFlix", "date": DateTime(2025, 11, 5), "price": "15.00"}
+    {"name": "Spotify", "date": DateTime(2025, 10, 25), "price": 55000},
+    {"name": "YouTube Premium", "date": DateTime(2025, 10, 25), "price": 59000},
+    {"name": "Microsoft OneDrive", "date": DateTime(2025, 10, 28), "price": 32000},
+    {"name": "Netflix", "date": DateTime(2025, 11, 5), "price": 154000} 
   ];
 
   @override
