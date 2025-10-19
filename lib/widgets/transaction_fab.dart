@@ -5,12 +5,20 @@ import 'package:monexa_app/widgets/transaction_modal.dart';
 class TransactionFAB extends StatelessWidget {
   const TransactionFAB({super.key});
 
-  void _showAddTransactionModal(BuildContext context) {
-    showModalBottomSheet(
+  void _showAddTransactionModal(BuildContext context) async {
+    // CRITICAL FIX: No callback needed - Provider auto-updates!
+    await showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => const TransactionModal(),
+      enableDrag: true,
+      isDismissible: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: const TransactionModal(),
+      ),
     );
   }
 

@@ -7,19 +7,9 @@ import 'package:flutter/widgets.dart';
 
 import 'index_controller.dart';
 
-///
-/// NOTICE::
-///
-/// In order to make package smaller,currently we're not supporting any build-in page transformers
-/// You can find build in transforms here:
-///
-///
-///
-
 const int kMaxValue = 2000000000;
 const int kMiddleValue = 1000000000;
 
-///  Default auto play transition duration (in millisecond)
 const int kDefaultTransactionDuration = 300;
 
 class TransformInfo {

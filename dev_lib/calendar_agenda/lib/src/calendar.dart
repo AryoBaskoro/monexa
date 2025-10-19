@@ -147,7 +147,6 @@ class CalendarAgendaState extends State<CalendarAgenda>
                         10)
                 : const EdgeInsets.symmetric(horizontal: 10),
             initialScrollIndex: _daySelectedIndex ?? 0,
-            // initialAlignment: _scrollAlignment,
             initialAlignment:
                 widget.selectedDayPosition == SelectedDayPosition.center
                     ? 78 / 200

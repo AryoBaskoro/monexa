@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
+import 'package:monexa_app/common/currency_helper.dart';
 import 'package:monexa_app/widgets/custom_arc_painter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CollapsibleHeader extends StatefulWidget {
-  const CollapsibleHeader({super.key});
+  final double totalBalance;
+  final double monthlyExpenses; // CRITICAL FIX: Changed from monthlyBills to monthlyExpenses
+  
+  const CollapsibleHeader({
+    super.key,
+    required this.totalBalance,
+    required this.monthlyExpenses,
+  });
 
   @override
   State<CollapsibleHeader> createState() => _CollapsibleHeaderState();
@@ -219,18 +227,20 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
               ),
               SizedBox(height: media.width * 0.02),
               Text(
-                "10.235.000",
+                widget.monthlyExpenses == 0 
+                    ? "0" 
+                    : CurrencyHelper.formatNumber(widget.monthlyExpenses),
                 style: TextStyle(
-                  color: TColor.text(context),
+                  color: TColor.white,
                   fontSize: 35,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               SizedBox(height: media.width * 0.05),
               Text(
-                "This month bills",
+                "This Month Expenses", // CRITICAL FIX: Changed label from "This month bills"
                 style: TextStyle(
-                  color: TColor.text(context),
+                  color: TColor.gray40,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -283,7 +293,11 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 200),
                               child: Text(
-                                _isCurrencyVisible ? "Rp 19.999.999" : "••••••",
+                                _isCurrencyVisible 
+                                    ? (widget.totalBalance == 0 
+                                        ? "0" 
+                                        : CurrencyHelper.formatNumber(widget.totalBalance))
+                                    : "••••••",
                                 key: ValueKey<bool>(_isCurrencyVisible),
                                 style: TextStyle(
                                   color: TColor.text(context),

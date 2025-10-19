@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/app_theme.dart';
 import 'package:monexa_app/common/theme_manager.dart';
+import 'package:monexa_app/services/transaction_service.dart';
 import 'package:monexa_app/view/login/welcome_view.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeManager(),
+    // CRITICAL FIX: MultiProvider untuk TransactionService dan ThemeManager
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeManager()),
+        ChangeNotifierProvider(create: (context) => TransactionService()),
+      ],
       child: const MyApp(),
     ),
   );

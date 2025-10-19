@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
+import 'package:monexa_app/common/currency_helper.dart';
 import 'package:monexa_app/common/theme_manager.dart';
+import 'package:monexa_app/services/transaction_service.dart';
 import 'package:monexa_app/view/login/sign_in_view.dart';
 import 'package:monexa_app/widgets/animated_entry.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -16,18 +18,9 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin {
   late AnimationController _animationController;
 
-  final Map<String, dynamic> userData = {
-    "name": "Kelompok 5",
-    "email": "kelompok5@gmail.com",
-    "avatar": "assets/img/u1.png",
-  };
-
-  // Updated financial stats with reasonable Rupiah amounts
-  final List<Map<String, dynamic>> financialStats = [
-    {"title": "Total Income", "amount": 8500000.00, "icon": "assets/img/money.png", "color": Colors.green, "isPositive": true},
-    {"title": "Total Expenses", "amount": 5250000.00, "icon": "assets/img/chart.png", "color": Colors.red, "isPositive": false},
-    {"title": "Total Balance", "amount": 3250000.00, "icon": "assets/img/creditcards.png", "color": TColor.primary, "isPositive": true},
-  ];
+  // CRITICAL FIX: Load user data from SharedPreferences
+  String userName = "User";
+  String userEmail = "user@email.com";
 
   @override
   void initState() {
@@ -37,6 +30,23 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
       duration: const Duration(milliseconds: 1000),
     );
     _animationController.forward();
+    
+    // CRITICAL FIX: Load user data on init
+    _loadUserData();
+    
+    // Load transaction data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TransactionService>(context, listen: false).getAllTransactions();
+    });
+  }
+
+  // CRITICAL FIX: Load user preferences from SharedPreferences
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('user_name') ?? 'Kelompok 5';
+      userEmail = prefs.getString('user_email') ?? 'kelompok5@gmail.com';
+    });
   }
 
   @override
@@ -44,56 +54,76 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
     _animationController.dispose();
     super.dispose();
   }
-  
-  // Helper function to format currency for Indonesian Rupiah
-  String _formatCurrency(double amount) {
-    final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
-    return format.format(amount);
-  }
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
     
-    return Scaffold(
-      backgroundColor: TColor.background(context),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            AnimatedEntry( 
-              index: 0,
-              controller: _animationController,
-              child: _buildProfileHeader(media),
-            ),
-            const SizedBox(height: 20),
-            AnimatedEntry( 
-              index: 1,
-              controller: _animationController,
-              child: _buildThemeToggle(),
-            ),
-            const SizedBox(height: 20),
-            AnimatedEntry( 
-              index: 2,
-              controller: _animationController,
-              child: _buildFinancialSummary(),
-            ),
-            const SizedBox(height: 20),
-            AnimatedEntry( 
-              index: 3,
-              controller: _animationController,
-              child: _buildFinancialStats(),
-            ),
-            const SizedBox(height: 10),
-            AnimatedEntry( 
-              index: 4,
-              controller: _animationController,
-              child: _buildLogoutButton(),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
+    // CRITICAL FIX: Use Consumer for real-time data
+    return Consumer<TransactionService>(
+      builder: (context, transactionService, child) {
+        return FutureBuilder<List<dynamic>>(
+          future: Future.wait([
+            transactionService.calculateMonthlyIncome(),
+            transactionService.calculateMonthlyExpenses(),
+            transactionService.calculateTotalBalance(),
+          ]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(
+                backgroundColor: TColor.background(context),
+                body: const Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            // CRITICAL FIX: Use real financial data
+            final double totalIncome = snapshot.data?[0] as double? ?? 0;
+            final double totalExpenses = snapshot.data?[1] as double? ?? 0;
+            final double totalBalance = snapshot.data?[2] as double? ?? 0;
+
+            return Scaffold(
+              backgroundColor: TColor.background(context),
+              body: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    AnimatedEntry( 
+                      index: 0,
+                      controller: _animationController,
+                      child: _buildProfileHeader(media),
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedEntry( 
+                      index: 1,
+                      controller: _animationController,
+                      child: _buildThemeToggle(),
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedEntry( 
+                      index: 2,
+                      controller: _animationController,
+                      child: _buildFinancialSummary(totalIncome, totalExpenses, totalBalance),
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedEntry( 
+                      index: 3,
+                      controller: _animationController,
+                      child: _buildFinancialStats(totalIncome, totalExpenses, totalBalance),
+                    ),
+                    const SizedBox(height: 10),
+                    AnimatedEntry( 
+                      index: 4,
+                      controller: _animationController,
+                      child: _buildLogoutButton(),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -125,19 +155,19 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(50),
-                child: Image.asset(userData["avatar"], width: 100, height: 100, fit: BoxFit.cover),
+                child: Image.asset("assets/img/u1.png", width: 100, height: 100, fit: BoxFit.cover),
               ),
             ),
           ),
           const SizedBox(height: 15),
           _SubtleAnimatedEntry(
             delay: 200,
-            child: Text(userData["name"], style: TextStyle(color: TColor.white, fontSize: 24, fontWeight: FontWeight.w700)),
+            child: Text(userName, style: TextStyle(color: TColor.white, fontSize: 24, fontWeight: FontWeight.w700)),
           ),
           const SizedBox(height: 5),
           _SubtleAnimatedEntry(
             delay: 300,
-            child: Text(userData["email"], style: TextStyle(color: TColor.gray40, fontSize: 14, fontWeight: FontWeight.w500)),
+            child: Text(userEmail, style: TextStyle(color: TColor.gray40, fontSize: 14, fontWeight: FontWeight.w500)),
           ),
         ],
       ),
@@ -219,7 +249,7 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
     );
   }
 
-  Widget _buildFinancialSummary() {
+  Widget _buildFinancialSummary(double totalIncome, double totalExpenses, double totalBalance) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -234,11 +264,11 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildSummaryItem("Income", financialStats[0]["amount"], Colors.green),
+                _buildSummaryItem("Income", totalIncome, Colors.green),
                 Container(width: 1, height: 40, color: TColor.gray50),
-                _buildSummaryItem("Expenses", financialStats[1]["amount"], Colors.red),
+                _buildSummaryItem("Expenses", totalExpenses, Colors.red),
                 Container(width: 1, height: 40, color: TColor.gray50),
-                _buildSummaryItem("Balance", financialStats[2]["amount"], TColor.primary),
+                _buildSummaryItem("Balance", totalBalance, TColor.primary),
               ],
             ),
           ],
@@ -252,13 +282,41 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
       children: [
         Text(title, style: TextStyle(color: TColor.gray40, fontSize: 12, fontWeight: FontWeight.w500)),
         const SizedBox(height: 8),
-        // Updated currency format
-        Text(_formatCurrency(amount), style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w600)),
+        // CRITICAL FIX: Use CurrencyHelper for consistency
+        Text(
+          CurrencyHelper.formatNumber(amount), 
+          style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }
 
-  Widget _buildFinancialStats() {
+  Widget _buildFinancialStats(double totalIncome, double totalExpenses, double totalBalance) {
+    // CRITICAL FIX: Create stats list from real data
+    final List<Map<String, dynamic>> financialStats = [
+      {
+        "title": "Total Income",
+        "amount": totalIncome,
+        "icon": "assets/img/money.png",
+        "color": Colors.green,
+        "isPositive": true
+      },
+      {
+        "title": "Total Expenses",
+        "amount": totalExpenses,
+        "icon": "assets/img/chart.png",
+        "color": Colors.red,
+        "isPositive": false
+      },
+      {
+        "title": "Total Balance",
+        "amount": totalBalance,
+        "icon": "assets/img/creditcards.png",
+        "color": TColor.primary,
+        "isPositive": totalBalance >= 0
+      },
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -297,12 +355,19 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
               children: [
                 Text(stat["title"], style: TextStyle(color: TColor.gray30, fontSize: 12, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 4),
-                // Updated currency format
-                Text(_formatCurrency(stat["amount"]), style: TextStyle(color: TColor.white, fontSize: 16, fontWeight: FontWeight.w700)),
+                // CRITICAL FIX: Use CurrencyHelper for consistency
+                Text(
+                  CurrencyHelper.formatNumber(stat["amount"]), 
+                  style: TextStyle(color: TColor.white, fontSize: 16, fontWeight: FontWeight.w700),
+                ),
               ],
             ),
           ),
-          Icon(stat["isPositive"] ? Icons.trending_up : Icons.trending_down, color: stat["isPositive"] ? Colors.green : Colors.red, size: 20),
+          Icon(
+            stat["isPositive"] ? Icons.trending_up : Icons.trending_down, 
+            color: stat["isPositive"] ? Colors.green : Colors.red, 
+            size: 20,
+          ),
         ],
       ),
     );

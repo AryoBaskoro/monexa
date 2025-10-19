@@ -2,17 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../common/color_extension.dart';
-
-// ADDED: The currency formatting function
-String _formatCurrency(dynamic amount) {
-  if (amount is! num) {
-    return 'Rp 0';
-  }
-  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
-  return format.format(amount);
-}
+import '../common/currency_helper.dart';
+import '../common/transaction_helper.dart';
+import '../models/transaction.dart';
 
 
 class UpcomingList extends StatelessWidget {
@@ -25,10 +18,16 @@ class UpcomingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime date = sObj["date"] ?? DateTime.now();
-    final String month = DateFormat('MMM').format(date);
-    final String day = DateFormat('dd').format(date);
-    
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Upcoming bills selalu tipe bill (merah/orange)
+    final typeColor = TransactionHelper.getColorForType(TransactionType.bill, context);
+    final iconData = TransactionHelper.getIconForCategory(sObj["name"] ?? "");
+    final bgColor = TransactionHelper.getBackgroundColorForType(TransactionType.bill);
+    
+    // CRITICAL FIX: Format dengan thousands separator, dengan minus untuk bill
+    final amount = sObj["price"] as num? ?? 0;
+    final formattedAmount = CurrencyHelper.formatExpense(amount.toDouble());
     
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -47,38 +46,21 @@ class UpcomingList extends StatelessWidget {
           alignment: Alignment.center,
           child: Row(
             children: [
+              // Ikon dengan background warna
               Container(
                 height: 50,
                 width: 50,
-                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TColor.cardBackground(context),
+                  color: bgColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      month,
-                      style: TextStyle(
-                          color: TColor.secondaryText(context),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Text(
-                      day,
-                      style: TextStyle(
-                          color: TColor.text(context),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
-                    )
-                  ],
+                child: Icon(
+                  iconData,
+                  color: typeColor,
+                  size: 24,
                 ),
               ),
-              const SizedBox(
-                width: 15,
-              ),
+              const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,31 +68,31 @@ class UpcomingList extends StatelessWidget {
                     Text(
                       sObj["name"] ?? "Bill",
                       style: TextStyle(
-                          color: TColor.text(context),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600),
+                        color: TColor.text(context),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Due ${DateFormat('MMM dd, yyyy').format(date)}",
                       style: TextStyle(
-                          color: TColor.secondaryText(context),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500),
+                        color: TColor.secondaryText(context),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                width: 8,
-              ),
+              const SizedBox(width: 8),
               Text(
-                // FIXED: Removed '$' and now uses the formatter
-                "-${_formatCurrency(sObj["price"])}",
+                formattedAmount,
                 style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700),
+                  color: typeColor, // Warna merah/orange untuk bill
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
               )
             ],
           ),

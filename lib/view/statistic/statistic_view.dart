@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Make sure to import the intl package
 import 'package:monexa_app/common/color_extension.dart';
+import 'package:monexa_app/common/currency_helper.dart';
+import 'package:monexa_app/common/transaction_helper.dart';
+import 'package:monexa_app/services/transaction_service.dart';
 import 'package:monexa_app/widgets/spending_chart_painter.dart';
+import 'package:provider/provider.dart';
 
 enum DateFilter { week, month, year }
 enum SortType { ascending, descending }
-
-// --- HELPER FUNCTION for currency formatting ---
-String _formatCurrency(dynamic amount) {
-  if (amount is! num) {
-    return 'Rp 0';
-  }
-  final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
-  return format.format(amount);
-}
 
 class StatisticView extends StatefulWidget {
   const StatisticView({super.key});
@@ -31,54 +25,6 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   DateFilter _selectedDateFilter = DateFilter.month;
   SortType _sortType = SortType.descending;
   bool _isChartMinimized = false;
-
-  final Map<DateFilter, List<ChartData>> chartDataByFilter = {
-    DateFilter.week: [
-      ChartData(color: Colors.pink.shade300, value: 15),
-      ChartData(color: Colors.green.shade300, value: 20),
-      ChartData(color: Colors.blue.shade300, value: 10),
-      ChartData(color: Colors.orange.shade300, value: 8),
-      ChartData(color: Colors.purple.shade300, value: 5),
-    ],
-    DateFilter.month: [
-      ChartData(color: Colors.pink.shade300, value: 20),
-      ChartData(color: Colors.green.shade300, value: 25),
-      ChartData(color: Colors.blue.shade300, value: 15),
-      ChartData(color: Colors.orange.shade300, value: 10),
-      ChartData(color: Colors.purple.shade300, value: 5),
-      ChartData(color: Colors.yellow.shade600, value: 8),
-      ChartData(color: Colors.teal.shade300, value: 12),
-      ChartData(color: Colors.red.shade300, value: 18),
-    ],
-    DateFilter.year: [
-      ChartData(color: Colors.pink.shade300, value: 30),
-      ChartData(color: Colors.green.shade300, value: 35),
-      ChartData(color: Colors.blue.shade300, value: 25),
-      ChartData(color: Colors.orange.shade300, value: 20),
-      ChartData(color: Colors.purple.shade300, value: 15),
-      ChartData(color: Colors.yellow.shade600, value: 18),
-      ChartData(color: Colors.teal.shade300, value: 22),
-      ChartData(color: Colors.red.shade300, value: 28),
-      ChartData(color: Colors.indigo.shade300, value: 12),
-    ],
-  };
-
-  // FIXED: Updated total amounts to a more appropriate format
-  final Map<DateFilter, String> totalAmountByFilter = {
-    DateFilter.week: "Rp 5,8 Jt",
-    DateFilter.month: "Rp 27 Jt",
-    DateFilter.year: "Rp 205 Jt",
-  };
-
-  // FIXED: Updated category amounts to realistic Rupiah values
-  List<Map<String, dynamic>> categoryItems = [
-    {'name': 'Food & Drinks', 'icon': Icons.fastfood_rounded, 'color': Colors.orange, 'amount': 250000.0},
-    {'name': 'Shopping', 'icon': Icons.shopping_bag_rounded, 'color': Colors.pink, 'amount': 420500.0},
-    {'name': 'Transportation', 'icon': Icons.directions_car_rounded, 'color': Colors.blue, 'amount': 85700.0},
-    {'name': 'Entertainment', 'icon': Icons.movie_rounded, 'color': Colors.purple, 'amount': 150000.0},
-    {'name': 'Bills & Utilities', 'icon': Icons.receipt_long_rounded, 'color': Colors.red, 'amount': 320000.0},
-    {'name': 'Healthcare', 'icon': Icons.local_hospital_rounded, 'color': Colors.green, 'amount': 180250.0},
-  ];
 
   @override
   void initState() {
@@ -104,6 +50,11 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     );
     
     _chartAnimationController.forward();
+    
+    // CRITICAL FIX: Load data on init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<TransactionService>(context, listen: false).getAllTransactions();
+    });
   }
 
   @override
@@ -111,6 +62,29 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     _chartAnimationController.dispose();
     _minimizeController.dispose();
     super.dispose();
+  }
+
+  // CRITICAL FIX: Get date range based on filter
+  Map<String, DateTime> _getDateRange(DateFilter filter) {
+    final now = DateTime.now();
+    DateTime start, end;
+    
+    switch (filter) {
+      case DateFilter.week:
+        start = now.subtract(const Duration(days: 7));
+        end = now;
+        break;
+      case DateFilter.month:
+        start = DateTime(now.year, now.month, 1);
+        end = DateTime(now.year, now.month + 1, 0);
+        break;
+      case DateFilter.year:
+        start = DateTime(now.year, 1, 1);
+        end = DateTime(now.year, 12, 31);
+        break;
+    }
+    
+    return {'start': start, 'end': end};
   }
 
   void _changeFilter(DateFilter newFilter) {
@@ -123,14 +97,14 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     }
   }
 
-  void _toggleSort() {
+  void _toggleSort(List<MapEntry<String, double>> categoryList) {
     setState(() {
       _sortType = _sortType == SortType.ascending ? SortType.descending : SortType.ascending;
-      categoryItems.sort((a, b) {
+      categoryList.sort((a, b) {
         if (_sortType == SortType.ascending) {
-          return a['amount'].compareTo(b['amount']);
+          return a.value.compareTo(b.value);
         } else {
-          return b['amount'].compareTo(a['amount']);
+          return b.value.compareTo(a.value);
         }
       });
     });
@@ -192,54 +166,162 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     }
   }
 
+  // CRITICAL FIX: Category colors that match chart colors
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'food':
+      case 'makanan':
+        return Colors.orange.shade300;
+      case 'transport':
+      case 'transportation':
+      case 'transportasi':
+        return Colors.blue.shade300;
+      case 'shopping':
+      case 'belanja':
+        return Colors.pink.shade300;
+      case 'entertainment':
+      case 'hiburan':
+        return Colors.purple.shade300;
+      case 'health':
+      case 'healthcare':
+      case 'kesehatan':
+        return Colors.red.shade300;
+      case 'home':
+      case 'rumah':
+        return Colors.green.shade300;
+      case 'electricity':
+      case 'listrik':
+        return Colors.yellow.shade600;
+      case 'water':
+      case 'air':
+        return Colors.teal.shade300;
+      case 'internet':
+      case 'phone':
+      case 'telepon':
+        return Colors.indigo.shade300;
+      default:
+        return Colors.grey.shade300;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // --- DYNAMIC DATA CALCULATION ---
-    final double totalExpense = categoryItems.fold(0.0, (sum, item) => sum + (item['amount'] as double));
-    final Map<String, dynamic> highestExpenseItem = categoryItems.isNotEmpty ? categoryItems.reduce((a, b) => a['amount'] > b['amount'] ? a : b) : {};
-    final double highestExpense = highestExpenseItem.isNotEmpty ? highestExpenseItem['amount'] : 0.0;
-    final String mostUsedCategoryName = highestExpenseItem.isNotEmpty ? highestExpenseItem['name'] : 'N/A';
-    final IconData mostUsedCategoryIcon = highestExpenseItem.isNotEmpty ? highestExpenseItem['icon'] : Icons.question_mark;
-    const double totalIncome = 30000000.0; // Mock Rp 30 Jt for demonstration
+    // CRITICAL FIX: Use Consumer for real-time data
+    return Consumer<TransactionService>(
+      builder: (context, transactionService, child) {
+        // Get date range based on selected filter
+        final dateRange = _getDateRange(_selectedDateFilter);
+        
+        return FutureBuilder<Map<String, dynamic>>(
+          future: transactionService.getStatisticsForDateRange(
+            dateRange['start']!,
+            dateRange['end']!,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(
+                backgroundColor: TColor.background(context),
+                body: const Center(child: CircularProgressIndicator()),
+              );
+            }
 
-    return Scaffold(
-      backgroundColor: TColor.background(context),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            _buildChartSection(),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  if (!_isChartMinimized) ...[
-                    // Pass dynamic data to the summary section
-                    _buildSummarySection(totalExpense, highestExpense, totalIncome, mostUsedCategoryName, mostUsedCategoryIcon),
-                    const SizedBox(height: 20),
+            final stats = snapshot.data ?? {};
+            final double totalExpense = stats['totalExpense'] ?? 0.0;
+            final double totalIncome = stats['totalIncome'] ?? 0.0;
+            final double highestExpense = stats['highestExpense'] ?? 0.0;
+            final String mostUsedCategory = stats['mostUsedCategory'] ?? 'None';
+            final Map<String, double> categorySpending = 
+                (stats['categorySpending'] as Map<String, double>?) ?? {};
+            
+            // CRITICAL FIX: Use TransactionHelper for consistent icons
+            final categoryListData = categorySpending.entries.map((entry) {
+              return {
+                'name': entry.key,
+                'amount': entry.value,
+                'icon': TransactionHelper.getIconForCategory(entry.key), // Use same helper as Home page
+                'color': _getCategoryColor(entry.key),
+              };
+            }).toList();
+            
+            if (_sortType == SortType.descending) {
+              categoryListData.sort((a, b) => (b['amount'] as double).compareTo(a['amount'] as double));
+            } else {
+              categoryListData.sort((a, b) => (a['amount'] as double).compareTo(b['amount'] as double));
+            }
+            
+            // Get icon for most used category
+            final categoryIcon = TransactionHelper.getIconForCategory(mostUsedCategory); // Use same helper as Home page
+
+            final List<ChartData> chartData = _createChartData(categorySpending);
+
+            return Scaffold(
+              backgroundColor: TColor.background(context),
+              body: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    _buildChartSection(
+                      chartData, 
+                      totalExpense,
+                      totalIncome,
+                      highestExpense,
+                      mostUsedCategory,
+                      categoryIcon,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        children: [
+                          if (!_isChartMinimized) ...[
+                            _buildSummarySection(
+                              totalExpense,
+                              highestExpense,
+                              totalIncome,
+                              mostUsedCategory,
+                              categoryIcon,
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                          _buildCategoryListSection(categoryListData),
+                        ],
+                      ),
+                    ),
                   ],
-                  _buildCategoryListSection(),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
-  Widget _buildChartSection() {
-    final currentChartData = chartDataByFilter[_selectedDateFilter]!;
-    final currentTotalAmount = totalAmountByFilter[_selectedDateFilter]!;
+  // CRITICAL FIX: Create chart data with colors matching category colors
+  List<ChartData> _createChartData(Map<String, double> categorySpending) {
+    if (categorySpending.isEmpty) {
+      return [ChartData(color: Colors.grey.shade300, value: 1)];
+    }
 
-    // --- DYNAMIC DATA CALCULATION for minimized view ---
-    final double totalExpense = categoryItems.fold(0.0, (sum, item) => sum + (item['amount'] as double));
-    final Map<String, dynamic> highestExpenseItem = categoryItems.isNotEmpty ? categoryItems.reduce((a, b) => a['amount'] > b['amount'] ? a : b) : {};
-    final double highestExpense = highestExpenseItem.isNotEmpty ? highestExpenseItem['amount'] : 0.0;
-    final String mostUsedCategoryName = highestExpenseItem.isNotEmpty ? highestExpenseItem['name'] : 'N/A';
-    final IconData mostUsedCategoryIcon = highestExpenseItem.isNotEmpty ? highestExpenseItem['icon'] : Icons.question_mark;
-    const double totalIncome = 30000000.0;
+    final List<ChartData> chartData = [];
 
+    categorySpending.forEach((category, amount) {
+      chartData.add(ChartData(
+        color: _getCategoryColor(category), // Use same color as category list
+        value: amount / 100000, // Scale for chart display
+      ));
+    });
+
+    return chartData;
+  }
+
+  Widget _buildChartSection(
+    List<ChartData> chartData,
+    double totalExpense,
+    double totalIncome,
+    double highestExpense,
+    String mostUsedCategory,
+    IconData categoryIcon,
+  ) {
     return GestureDetector(
       onVerticalDragUpdate: _handleVerticalDragUpdate,
       onVerticalDragEnd: _handleVerticalDragEnd,
@@ -251,7 +333,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             curve: Curves.easeInOutCubic,
             padding: EdgeInsets.fromLTRB(
               20,
-              40, // Added padding for status bar
+              40,
               20,
               _isChartMinimized ? 16 : 10,
             ),
@@ -265,9 +347,17 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             child: Column(
               children: [
                 if (_isChartMinimized)
-                  _buildMinimizedChart(currentChartData, currentTotalAmount, totalExpense, highestExpense, totalIncome, mostUsedCategoryName, mostUsedCategoryIcon)
+                  _buildMinimizedChart(
+                    chartData,
+                    CurrencyHelper.formatNumber(totalExpense),
+                    totalExpense,
+                    highestExpense,
+                    totalIncome,
+                    mostUsedCategory,
+                    categoryIcon,
+                  )
                 else
-                  _buildExpandedChart(currentChartData, currentTotalAmount),
+                  _buildExpandedChart(chartData, CurrencyHelper.formatNumber(totalExpense)),
                 
                 const SizedBox(height: 12),
                 _buildSwipeBarIndicator(),
@@ -343,13 +433,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             children: [
               _buildMiniGridItem(
                 "Total Expense",
-                _formatCurrency(totalExpense),
+                CurrencyHelper.formatExpense(totalExpense),
                 showRightBorder: true,
                 showBottomBorder: true,
               ),
               _buildMiniGridItem(
                 "Highest Expense",
-                _formatCurrency(highestExpense),
+                CurrencyHelper.formatExpense(highestExpense),
                 showBottomBorder: true,
               ),
             ],
@@ -358,7 +448,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             children: [
               _buildMiniGridItem(
                 "Total Income",
-                _formatCurrency(totalIncome),
+                CurrencyHelper.formatIncome(totalIncome),
                 showRightBorder: true,
               ),
               _buildMiniGridItem(
@@ -565,13 +655,17 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
         children: [
           Row(
             children: [
-              _buildGridItem("Total Expense", _formatCurrency(totalExpense), showRightBorder: true, showBottomBorder: true),
-              _buildGridItem("Highest Expense", _formatCurrency(highestExpense), showBottomBorder: true),
+              // CRITICAL FIX: Red color for Total Expense
+              _buildGridItem("Total Expense", CurrencyHelper.formatExpense(totalExpense), 
+                showRightBorder: true, showBottomBorder: true, valueColor: Colors.red),
+              // CRITICAL FIX: Red color for Highest Expense
+              _buildGridItem("Highest Expense", CurrencyHelper.formatExpense(highestExpense), 
+                showBottomBorder: true, valueColor: Colors.red),
             ],
           ),
           Row(
             children: [
-              _buildGridItem("Total Income", _formatCurrency(totalIncome), showRightBorder: true),
+              _buildGridItem("Total Income", CurrencyHelper.formatIncome(totalIncome), showRightBorder: true),
               _buildGridItem("Most Used Category", categoryName, icon: categoryIcon),
             ],
           ),
@@ -580,7 +674,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     );
   }
 
-  Widget _buildGridItem(String title, String value, {IconData? icon, bool showRightBorder = false, bool showBottomBorder = false}) {
+  Widget _buildGridItem(String title, String value, {IconData? icon, bool showRightBorder = false, bool showBottomBorder = false, Color? valueColor}) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -596,12 +690,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             Text(title, style: TextStyle(color: TColor.secondaryText(context), fontSize: 12)),
             const SizedBox(height: 4),
             icon == null
-                ? Text(value, style: TextStyle(color: TColor.text(context), fontSize: 16, fontWeight: FontWeight.bold))
+                // CRITICAL FIX: Use valueColor if provided, otherwise use default text color
+                ? Text(value, style: TextStyle(color: valueColor ?? TColor.text(context), fontSize: 16, fontWeight: FontWeight.bold))
                 : Row(
                     children: [
                       Icon(icon, color: TColor.secondaryText(context), size: 18),
                       const SizedBox(width: 4),
-                      Text(value, style: TextStyle(color: TColor.text(context), fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(value, style: TextStyle(color: valueColor ?? TColor.text(context), fontSize: 16, fontWeight: FontWeight.bold)),
                     ],
                   ),
           ],
@@ -610,7 +705,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     );
   }
 
-  Widget _buildCategoryListSection() {
+  Widget _buildCategoryListSection(List<Map<String, dynamic>> categoryList) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Container(
@@ -627,7 +722,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             children: [
               _buildStaticFilterChip("Category"),
               GestureDetector(
-                onTap: _toggleSort,
+                onTap: () => _toggleSort([]),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -663,20 +758,30 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             ],
           ),
           const SizedBox(height: 16),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: categoryItems.length,
-            itemBuilder: (context, index) {
-              final item = categoryItems[index];
-              return _CategoryListItem(
-                icon: item['icon'],
-                color: item['color'],
-                name: item['name'],
-                amount: item['amount'],
-              );
-            },
-          ),
+          // CRITICAL FIX: Use passed categoryList instead of undefined categoryItems
+          if (categoryList.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                "No category data available",
+                style: TextStyle(color: TColor.gray40, fontSize: 14),
+              ),
+            )
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: categoryList.length,
+              itemBuilder: (context, index) {
+                final item = categoryList[index];
+                return _CategoryListItem(
+                  icon: item['icon'],
+                  color: item['color'],
+                  name: item['name'],
+                  amount: item['amount'],
+                );
+              },
+            ),
         ],
       ),
     );
@@ -738,8 +843,8 @@ class _CategoryListItem extends StatelessWidget {
             ),
           ),
           Text(
-            // FIXED: Using the currency formatter
-            "-${_formatCurrency(amount)}",
+            // CRITICAL FIX: Using CurrencyHelper with thousands separator and minus sign
+            CurrencyHelper.formatExpense(amount),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.redAccent,

@@ -9,6 +9,9 @@ import 'package:monexa_app/widgets/note_input_field.dart';
 import 'package:monexa_app/widgets/outlined_icon_button.dart';
 import 'package:monexa_app/widgets/tertiary_button.dart';
 import '../../common/color_extension.dart';
+import '../../common/currency_helper.dart';
+import '../../models/transaction.dart';
+import '../../services/transaction_service.dart';
 import 'dart:async';
 
 class CreateExpenseView extends StatefulWidget {
@@ -21,10 +24,12 @@ class CreateExpenseView extends StatefulWidget {
 class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTickerProviderStateMixin {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
+  final TransactionService _transactionService = TransactionService();
   
   String selectedCategory = 'Entertainment';
   DateTime selectedDate = DateTime.now();
   bool _isRecurring = false;
+  bool _isSaving = false;
   
   late AnimationController _animationController;
 
@@ -106,8 +111,8 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
                       index: 5,
                       controller: _animationController,
                       child: TertiaryButton(
-                        title: 'Save',
-                        onTap: _saveExpense,
+                        title: _isSaving ? 'Saving...' : 'Save',
+                        onTap: _isSaving ? () {} : _saveExpense,
                         gradient: LinearGradient(colors: [TColor.secondary, TColor.secondary.withOpacity(0.8)]),
                         shadowColor: TColor.secondary,
                       ),
@@ -230,16 +235,62 @@ class _CreateExpenseViewState extends State<CreateExpenseView> with SingleTicker
     );
   }
 
-  void _saveExpense() {
+  void _saveExpense() async {
     if (_amountController.text.isEmpty) {
       _showCustomSnackBar('Please enter an amount', backgroundColor: TColor.secondary);
       return;
     }
-    _showCustomSnackBar('Expense saved successfully!', backgroundColor: TColor.primary);
+
+    // Parse amount - remove any formatting
+    final amountText = _amountController.text.replaceAll(RegExp(r'[^\d]'), '');
+    final amount = double.tryParse(amountText);
+
+    if (amount == null || amount <= 0) {
+      _showCustomSnackBar('Please enter a valid amount', backgroundColor: TColor.secondary);
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    // Determine transaction type - if recurring, it's a bill, otherwise expense
+    final transactionType = _isRecurring ? TransactionType.bill : TransactionType.expense;
     
-    Timer(const Duration(milliseconds: 800), () {
-      if (mounted) Navigator.pop(context);
-    });
+    // CRITICAL: Determine isPaid status based on date
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final transactionDate = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+    final isFutureDate = transactionDate.isAfter(today);
+
+    // Create transaction
+    final transaction = Transaction(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      type: transactionType,
+      amount: amount,
+      category: selectedCategory,
+      date: selectedDate,
+      note: _noteController.text.trim(),
+      isRecurring: _isRecurring,
+      isPaid: !isFutureDate, // Future transactions are unpaid, today/past are paid
+    );
+
+    // Save to service
+    final success = await _transactionService.addTransaction(transaction);
+
+    setState(() => _isSaving = false);
+
+    if (success) {
+      final typeLabel = _isRecurring ? 'Bill' : 'Expense';
+      _showCustomSnackBar(
+        '$typeLabel saved successfully! ${CurrencyHelper.formatRupiah(amount)}',
+        backgroundColor: TColor.primary,
+      );
+      
+      Timer(const Duration(milliseconds: 800), () {
+        if (mounted) Navigator.pop(context, true); // Return true to indicate success
+      });
+    } else {
+      _showCustomSnackBar('Failed to save expense', backgroundColor: TColor.secondary);
+    }
   }
 
   void _scanReceipt() {

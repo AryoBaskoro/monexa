@@ -20,13 +20,14 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
   int _selectTab = 0;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
-
-  final List<Widget> _views = [
-    const HomeView(),
-    const StatisticView(),
-    const CalenderView(),
-    const PromoView(),
-    const ProfileView(),
+  
+  // CRITICAL FIX: No need for rebuild counter - Provider handles updates!
+  final List<Widget> _views = const [
+    HomeView(),
+    StatisticView(),
+    CalenderView(),
+    PromoView(),
+    ProfileView(),
   ];
 
   @override
@@ -59,8 +60,11 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
       _selectTab = index;
     });
     
+    // Force rebuild of the selected view to refresh data
     _fadeController.forward();
   }
+  
+  // REMOVED: No longer needed - Provider handles real-time updates automatically!
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +102,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            // CRITICAL FIX: No callback needed - Provider notifyListeners handles it!
             const Padding(
               padding: EdgeInsets.only(right: 16, bottom: 12),
               child: TransactionFAB(),
@@ -118,24 +123,25 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
                 ],
               ),
               child: Padding(
-                // Padding di dalam container untuk GNav
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                // CRITICAL FIX: Reduced padding to prevent overflow
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 child: GNav(
                   selectedIndex: _selectTab,
                   onTabChange: _onTabChanged,
                   // --- STYLE BARU ---
                   rippleColor: TColor.primary.withOpacity(0.1),
                   hoverColor: TColor.primary.withOpacity(0.05),
-                  gap: 8,
+                  gap: 6, // CRITICAL FIX: Reduced gap to save space
                   // Warna ikon dan teks saat aktif (putih agar kontras dengan background)
                   activeColor: Colors.white,
-                  iconSize: 24,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  iconSize: 22, // CRITICAL FIX: Slightly smaller icons
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // CRITICAL FIX: Reduced padding
                   duration: const Duration(milliseconds: 400),
                   // Background tab yang aktif menggunakan warna primer
                   tabBackgroundColor: TColor.primary,
                   // Warna ikon saat tidak aktif
                   color: inactiveColor,
+                  textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), // CRITICAL FIX: Smaller text
                   tabs: const [
                     GButton(icon: Icons.home_rounded, text: 'Home'),
                     GButton(icon: Icons.bar_chart_rounded, text: 'Statistic'),

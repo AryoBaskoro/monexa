@@ -81,19 +81,14 @@ class RectSwiperPaginationBuilder extends SwiperPlugin {
     this.space = 3.0,
   });
 
-  ///color when current index,if set null , will be Theme.of(context).primaryColor
   final Color? activeColor;
 
-  ///,if set null , will be Theme.of(context).scaffoldBackgroundColor
   final Color? color;
 
-  ///Size of the rect when activate
   final Size activeSize;
 
-  ///Size of the rect
   final Size size;
 
-  /// Space between rects
   final double space;
 
   final Key? key;
@@ -155,19 +150,14 @@ class DotSwiperPaginationBuilder extends SwiperPlugin {
     this.space = 3.0,
   });
 
-  ///color when current index,if set null , will be Theme.of(context).primaryColor
   final Color? activeColor;
 
-  ///,if set null , will be Theme.of(context).scaffoldBackgroundColor
   final Color? color;
 
-  ///Size of the dot when activate
   final double activeSize;
 
-  ///Size of the dot
   final double size;
 
-  /// Space between dots
   final double space;
 
   final Key? key;
