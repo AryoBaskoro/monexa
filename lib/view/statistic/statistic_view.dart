@@ -283,6 +283,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                             const SizedBox(height: 20),
                           ],
                           _buildCategoryListSection(categoryListData),
+                          SizedBox(height: 80),
                         ],
                       ),
                     ),

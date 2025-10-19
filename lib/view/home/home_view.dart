@@ -173,7 +173,7 @@ class _HomeViewState extends State<HomeView> {
 
     return ListView.builder(
       key: const ValueKey('subscription_list'),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 80),
       itemCount: dataToShow.length,
       itemBuilder: (context, index) {
         var sObj = dataToShow[index] as Map? ?? {};
@@ -218,7 +218,7 @@ class _HomeViewState extends State<HomeView> {
 
     return ListView.builder(
       key: const ValueKey('bills_list'),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 80),
       itemCount: dataToShow.length,
       itemBuilder: (context, index) {
         var sObj = dataToShow[index] as Map? ?? {};

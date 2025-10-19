@@ -206,8 +206,8 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                 height: media.width * 0.72,
                 child: CustomPaint(
                   painter: CustomArcPainter(
-                    end: 220,
-                    activeColor: TColor.secondary,
+                    end: widget.monthlyExpenses / (widget.totalBalance + widget.monthlyExpenses) * 270,
+                    activeColor: (widget.totalBalance + widget.monthlyExpenses) < widget.monthlyExpenses ? Colors.red : TColor.secondary,
                     backgroundColor: Theme.of(context).brightness == Brightness.dark
                         ? TColor.gray60.withOpacity(0.5)
                         : TColor.gray20.withOpacity(0.3),

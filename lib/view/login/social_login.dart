@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:monexa_app/view/login/sign_up_view.dart';
 
 import '../../common/color_extension.dart';
-import '../../widgets/secondary_boutton.dart';
+import '../../widgets/secondary_button.dart';
 
 class SocialLoginView extends StatefulWidget {
   const SocialLoginView({super.key});

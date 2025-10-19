@@ -4,7 +4,7 @@ import 'package:monexa_app/view/login/sign_in_view.dart';
 import '../../common/color_extension.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/round_textfield.dart';
-import '../../widgets/secondary_boutton.dart';
+import '../../widgets/secondary_button.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});

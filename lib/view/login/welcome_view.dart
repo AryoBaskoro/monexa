@@ -5,7 +5,7 @@ import 'package:monexa_app/view/login/social_login.dart';
 
 import '../../common/color_extension.dart';
 import '../../widgets/primary_button.dart';
-import '../../widgets/secondary_boutton.dart';
+import '../../widgets/secondary_button.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});

@@ -116,7 +116,7 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
                       controller: _animationController,
                       child: _buildLogoutButton(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
