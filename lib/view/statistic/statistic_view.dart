@@ -203,7 +203,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     const double totalIncome = 30000000.0; // Mock Rp 30 Jt for demonstration
 
     return Scaffold(
-      backgroundColor: TColor.gray,
+      backgroundColor: TColor.background(context),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -256,7 +256,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
               _isChartMinimized ? 16 : 10,
             ),
             decoration: BoxDecoration(
-              color: TColor.gray70.withOpacity(0.5),
+              color: TColor.header(context),
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(25),
                 bottomRight: Radius.circular(25),
@@ -285,7 +285,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.3),
+          color: TColor.dividerColor(context),
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -302,7 +302,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.white.withOpacity(0.1),
+                color: TColor.dividerColor(context),
                 blurRadius: 15,
                 spreadRadius: 3,
               ),
@@ -334,7 +334,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   Widget _buildMiniSummaryGrid(double totalExpense, double highestExpense, double totalIncome, String categoryName, IconData categoryIcon) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: TColor.card(context).withOpacity(0.95),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -386,10 +386,10 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
         decoration: BoxDecoration(
           border: Border(
             right: showRightBorder
-                ? BorderSide(color: Colors.grey.shade200, width: 1)
+                ? BorderSide(color: TColor.dividerColor(context), width: 1)
                 : BorderSide.none,
             bottom: showBottomBorder
-                ? BorderSide(color: Colors.grey.shade200, width: 1)
+                ? BorderSide(color: TColor.dividerColor(context), width: 1)
                 : BorderSide.none,
           ),
         ),
@@ -399,7 +399,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             Text(
               title,
               style: TextStyle(
-                color: Colors.grey[600],
+                color: TColor.secondaryText(context),
                 fontSize: 9,
               ),
               maxLines: 1,
@@ -409,7 +409,8 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
             icon == null
                 ? Text(
                     value,
-                    style: const TextStyle(
+                    style: TextStyle(
+                      color: TColor.text(context),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -418,12 +419,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                   )
                 : Row(
                     children: [
-                      Icon(icon, color: Colors.grey[700], size: 14),
+                      Icon(icon, color: TColor.secondaryText(context), size: 14),
                       const SizedBox(width: 2),
                       Flexible(
                         child: Text(
                           value,
-                          style: const TextStyle(
+                          style: TextStyle(
+                            color: TColor.text(context),
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -450,7 +452,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.white.withOpacity(0.1),
+                    color: TColor.dividerColor(context),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
@@ -490,7 +492,7 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                     totalAmount,
                     key: ValueKey(totalAmount),
                     style: TextStyle(
-                      color: TColor.white,
+                      color: TColor.text(context),
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
@@ -526,19 +528,22 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
 
   Widget _buildFilterChipButton(String label, DateFilter filter) {
     final isSelected = _selectedDateFilter == filter;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final unselectedTextColor = isDark ? TColor.gray20 : TColor.gray30;
+    
     return GestureDetector(
       onTap: () => _changeFilter(filter),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? TColor.primary : TColor.gray60.withOpacity(0.2),
+          color: isSelected ? TColor.primary : TColor.cardBackground(context),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : TColor.gray30,
+            color: isSelected ? TColor.text(context) : unselectedTextColor,
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
@@ -548,11 +553,13 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   }
 
   Widget _buildSummarySection(double totalExpense, double highestExpense, double totalIncome, String categoryName, IconData categoryIcon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TColor.card(context),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 10)],
       ),
       child: Column(
         children: [
@@ -579,22 +586,22 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           border: Border(
-            right: showRightBorder ? BorderSide(color: Colors.grey.shade200, width: 1) : BorderSide.none,
-            bottom: showBottomBorder ? BorderSide(color: Colors.grey.shade200, width: 1) : BorderSide.none,
+            right: showRightBorder ? BorderSide(color: TColor.dividerColor(context), width: 1) : BorderSide.none,
+            bottom: showBottomBorder ? BorderSide(color: TColor.dividerColor(context), width: 1) : BorderSide.none,
           ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+            Text(title, style: TextStyle(color: TColor.secondaryText(context), fontSize: 12)),
             const SizedBox(height: 4),
             icon == null
-                ? Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
+                ? Text(value, style: TextStyle(color: TColor.text(context), fontSize: 16, fontWeight: FontWeight.bold))
                 : Row(
                     children: [
-                      Icon(icon, color: Colors.grey[700], size: 18),
+                      Icon(icon, color: TColor.secondaryText(context), size: 18),
                       const SizedBox(width: 4),
-                      Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(value, style: TextStyle(color: TColor.text(context), fontSize: 16, fontWeight: FontWeight.bold)),
                     ],
                   ),
           ],
@@ -604,12 +611,14 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
   }
 
   Widget _buildCategoryListSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: TColor.card(context),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 10)],
       ),
       child: Column(
         children: [
@@ -623,16 +632,16 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: TColor.inputBackground(context),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
+                    border: Border.all(color: TColor.dividerColor(context)),
                   ),
                   child: Row(
                     children: [
-                      const Text(
+                      Text(
                         "Sort",
                         style: TextStyle(
-                          color: Colors.black87,
+                          color: TColor.text(context),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -641,10 +650,10 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
                       AnimatedRotation(
                         turns: _sortType == SortType.ascending ? 0 : 0.5,
                         duration: const Duration(milliseconds: 200),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_upward,
                           size: 14,
-                          color: Colors.black87,
+                          color: TColor.text(context),
                         ),
                       ),
                     ],
@@ -677,14 +686,14 @@ class _StatisticViewState extends State<StatisticView> with TickerProviderStateM
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: TColor.inputBackground(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: TColor.dividerColor(context)),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: Colors.black87,
+        style: TextStyle(
+          color: TColor.text(context),
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:monexa_app/common/color_extension.dart';
+import 'package:monexa_app/common/theme_manager.dart';
 import 'package:monexa_app/view/login/sign_in_view.dart';
 import 'package:monexa_app/widgets/animated_entry.dart';
-import 'package:intl/intl.dart'; // It's good practice to use the intl package for formatting
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -52,8 +54,9 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context).size;
+    
     return Scaffold(
-      backgroundColor: TColor.gray,
+      backgroundColor: TColor.background(context),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -67,17 +70,23 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
             AnimatedEntry( 
               index: 1,
               controller: _animationController,
-              child: _buildFinancialSummary(),
+              child: _buildThemeToggle(),
             ),
             const SizedBox(height: 20),
             AnimatedEntry( 
               index: 2,
               controller: _animationController,
+              child: _buildFinancialSummary(),
+            ),
+            const SizedBox(height: 20),
+            AnimatedEntry( 
+              index: 3,
+              controller: _animationController,
               child: _buildFinancialStats(),
             ),
             const SizedBox(height: 10),
             AnimatedEntry( 
-              index: 3,
+              index: 4,
               controller: _animationController,
               child: _buildLogoutButton(),
             ),
@@ -93,7 +102,7 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
       width: double.infinity,
       padding: const EdgeInsets.only(top: 30, bottom: 30),
       decoration: BoxDecoration(
-        color: TColor.gray70.withOpacity(0.5),
+        color: TColor.header(context),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(25),
           bottomRight: Radius.circular(25),
@@ -135,13 +144,88 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
     );
   }
 
+  Widget _buildThemeToggle() {
+    final themeManager = Provider.of<ThemeManager>(context);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          color: TColor.card(context),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05),
+              blurRadius: 10,
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: TColor.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    themeManager.isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                    color: TColor.primary,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Dark Mode",
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      themeManager.isDarkMode ? "Enabled" : "Disabled",
+                      style: TextStyle(
+                        color: TColor.gray40,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Transform.scale(
+              scale: 0.8,
+              child: Switch(
+                value: themeManager.isDarkMode,
+                onChanged: (value) {
+                  themeManager.toggleTheme();
+                },
+                activeColor: TColor.primary,
+                activeTrackColor: TColor.primary.withOpacity(0.3),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFinancialSummary() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: TColor.gray70.withOpacity(0.5),
+          color: TColor.cardBackground(context),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: TColor.border.withOpacity(0.15)),
         ),
@@ -195,7 +279,7 @@ class _ProfileViewState extends State<ProfileView> with TickerProviderStateMixin
       decoration: BoxDecoration(
         border: Border.all(color: TColor.border.withOpacity(0.15)),
         borderRadius: BorderRadius.circular(16),
-        color: TColor.gray70.withOpacity(0.2),
+        color: TColor.cardBackground(context).withOpacity(0.5),
       ),
       child: Row(
         children: [

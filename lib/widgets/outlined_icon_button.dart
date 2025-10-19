@@ -23,18 +23,18 @@ class OutlinedIconButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           border: Border.all(color: TColor.border.withOpacity(0.15)),
-          color: TColor.gray60.withOpacity(0.2),
+          color: TColor.buttonBackground(context),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 22),
+            Icon(icon, color: TColor.text(context), size: 22),
             const SizedBox(width: 12),
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: TColor.text(context),
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               ),

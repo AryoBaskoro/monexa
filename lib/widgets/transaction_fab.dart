@@ -44,7 +44,7 @@ class TransactionFAB extends StatelessWidget {
           customBorder: const CircleBorder(),
           child: Icon(
             Icons.add_rounded,
-            color: TColor.white,
+            color: Colors.white,
             size: 32,
           ),
         ),

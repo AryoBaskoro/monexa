@@ -28,6 +28,8 @@ class UpcomingList extends StatelessWidget {
     final String month = DateFormat('MMM').format(date);
     final String day = DateFormat('dd').format(date);
     
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
@@ -39,6 +41,7 @@ class UpcomingList extends StatelessWidget {
             border: Border.all(
               color: TColor.border.withOpacity(0.15),
             ),
+            color: isDark ? TColor.cardBackground(context).withOpacity(0.5) : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
           alignment: Alignment.center,
@@ -49,7 +52,7 @@ class UpcomingList extends StatelessWidget {
                 width: 50,
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: TColor.gray70.withOpacity(0.5),
+                  color: TColor.cardBackground(context),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 alignment: Alignment.center,
@@ -59,14 +62,14 @@ class UpcomingList extends StatelessWidget {
                     Text(
                       month,
                       style: TextStyle(
-                          color: TColor.gray30,
+                          color: TColor.secondaryText(context),
                           fontSize: 10,
                           fontWeight: FontWeight.w500),
                     ),
                     Text(
                       day,
                       style: TextStyle(
-                          color: TColor.white,
+                          color: TColor.text(context),
                           fontSize: 14,
                           fontWeight: FontWeight.w600),
                     )
@@ -83,7 +86,7 @@ class UpcomingList extends StatelessWidget {
                     Text(
                       sObj["name"] ?? "Bill",
                       style: TextStyle(
-                          color: TColor.white,
+                          color: TColor.text(context),
                           fontSize: 14,
                           fontWeight: FontWeight.w600),
                     ),
@@ -91,7 +94,7 @@ class UpcomingList extends StatelessWidget {
                     Text(
                       "Due ${DateFormat('MMM dd, yyyy').format(date)}",
                       style: TextStyle(
-                          color: TColor.gray30,
+                          color: TColor.secondaryText(context),
                           fontSize: 12,
                           fontWeight: FontWeight.w500),
                     ),

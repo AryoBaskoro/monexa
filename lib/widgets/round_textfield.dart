@@ -39,8 +39,8 @@ class RoundTextField extends StatelessWidget {
           height: 48,
           width: double.maxFinite,
           decoration: BoxDecoration(
-              color: TColor.gray60.withOpacity(0.05),
-              border: Border.all(color: TColor.gray70),
+              color: TColor.inputBackground(context),
+              border: Border.all(color: TColor.inputBorder(context)),
               borderRadius: BorderRadius.circular(15)),
           child: TextField(
             controller: controller,

@@ -23,7 +23,7 @@ class SegmentButton extends StatelessWidget {
                 border: Border.all(
                   color: TColor.border.withOpacity(0.15),
                 ),
-                color: TColor.gray60.withOpacity(0.2),
+                color: TColor.cardBackground(context),
                 borderRadius: BorderRadius.circular(12),
               )
             : null,
@@ -31,7 +31,7 @@ class SegmentButton extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-              color: isActive ? TColor.white : TColor.gray30,
+              color: isActive ? TColor.text(context) : TColor.secondaryText(context),
               fontSize: 12,
               fontWeight: FontWeight.w600),
         ),

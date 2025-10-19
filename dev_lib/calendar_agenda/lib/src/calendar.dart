@@ -228,7 +228,7 @@ class CalendarAgendaState extends State<CalendarAgenda>
                                       .format(date),
                               style: TextStyle(
                                 fontSize: 12.0,
-                                color: const Color(0xffA2A2B5),
+                                color: widget.dateColor ?? const Color(0xffA2A2B5),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

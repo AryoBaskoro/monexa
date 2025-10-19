@@ -47,8 +47,8 @@ class CheckboxText extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: TColor.text(context),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),

@@ -55,19 +55,17 @@ class _CalenderViewState extends State<CalenderView> {
 
   @override
   Widget build(BuildContext context) {
-    var media = MediaQuery.sizeOf(context);
-    
     // ADDED: Calculate total price dynamically
     double totalPrice = subArr.fold(0.0, (sum, item) => sum + (item["price"] as num));
 
     return Scaffold(
-      backgroundColor: TColor.gray,
+      backgroundColor: TColor.background(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
               decoration: BoxDecoration(
-                  color: TColor.gray70.withOpacity(0.5),
+                  color: TColor.header(context),
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(25),
                       bottomRight: Radius.circular(25))),
@@ -93,7 +91,7 @@ class _CalenderViewState extends State<CalenderView> {
                           Text(
                             "Calendar",
                             style: TextStyle(
-                                color: TColor.white,
+                                color: TColor.text(context),
                                 fontSize: 40,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -107,7 +105,7 @@ class _CalenderViewState extends State<CalenderView> {
                                 // FIXED: Made subscription count dynamic
                                 "${subArr.length} subscriptions this month",
                                 style: TextStyle(
-                                    color: TColor.gray30,
+                                    color: TColor.secondaryText(context),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600),
                               ),
@@ -123,7 +121,7 @@ class _CalenderViewState extends State<CalenderView> {
                                     border: Border.all(
                                       color: TColor.border.withOpacity(0.1),
                                     ),
-                                    color: TColor.gray60.withOpacity(0.2),
+                                    color: TColor.buttonBackground(context),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   alignment: Alignment.center,
@@ -133,12 +131,12 @@ class _CalenderViewState extends State<CalenderView> {
                                         // FIXED: Month name is now dynamic
                                         DateFormat('MMMM').format(selectedDateNotAppBBar),
                                         style: TextStyle(
-                                            color: TColor.white,
+                                            color: TColor.text(context),
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600),
                                       ),
                                       Icon(
-                                        Icons.expand_more, color: TColor.white,
+                                        Icons.expand_more, color: TColor.text(context),
                                         size: 16.0,
                                       ),
                                     ],
@@ -154,12 +152,13 @@ class _CalenderViewState extends State<CalenderView> {
                     CalendarAgenda(
                       controller: calendarAgendaControllerNotAppBar,
                       backgroundColor: Colors.transparent,
-                      fullCalendarBackgroundColor: TColor.gray80,
-                      
+                      fullCalendarBackgroundColor: TColor.background(context),
+                      dateColor: TColor.text(context),
+                      fullCalendar: false,
                       locale: 'en',
                       weekDay: WeekDay.short,
                       fullCalendarDay: WeekDay.short,
-                      selectedDateColor: TColor.white,
+                      selectedDateColor: TColor.text(context),
                       initialDate: DateTime.now(),
                       calendarEventColor: TColor.secondary,
                       firstDate: DateTime.now().subtract(const Duration(days: 140)),
@@ -178,7 +177,7 @@ class _CalenderViewState extends State<CalenderView> {
                         border: Border.all(
                           color: TColor.border.withOpacity(0.15),
                         ),
-                        color: TColor.gray60.withOpacity(0.2),
+                        color: TColor.cardBackground(context),
                         borderRadius: BorderRadius.circular(12),
                       ),
 
@@ -186,7 +185,7 @@ class _CalenderViewState extends State<CalenderView> {
                         border: Border.all(
                           color: TColor.border.withOpacity(0.15),
                         ),
-                        color: TColor.gray60,
+                        color: TColor.cardBackground(context).withOpacity(0.8),
                         borderRadius: BorderRadius.circular(12),
                       ),
 
@@ -224,7 +223,7 @@ class _CalenderViewState extends State<CalenderView> {
                         // FIXED: Month name is now dynamic
                         DateFormat('MMMM').format(selectedDateNotAppBBar),
                         style: TextStyle(
-                            color: TColor.white,
+                            color: TColor.text(context),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
@@ -232,7 +231,7 @@ class _CalenderViewState extends State<CalenderView> {
                         // FIXED: Total price is now dynamic and formatted
                         _formatCurrency(totalPrice),
                         style: TextStyle(
-                            color: TColor.white,
+                            color: TColor.text(context),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       )
@@ -245,14 +244,14 @@ class _CalenderViewState extends State<CalenderView> {
                         // FIXED: Date is now dynamic and formatted
                         DateFormat('dd.MM.yyyy').format(selectedDateNotAppBBar),
                         style: TextStyle(
-                            color: TColor.gray30,
+                            color: TColor.secondaryText(context),
                             fontSize: 12,
                             fontWeight: FontWeight.w500),
                       ),
                       Text(
                         "in upcoming bills",
                         style: TextStyle(
-                            color: TColor.gray30,
+                            color: TColor.secondaryText(context),
                             fontSize: 12,
                             fontWeight: FontWeight.w500),
                       )

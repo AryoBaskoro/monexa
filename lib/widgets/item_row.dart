@@ -16,14 +16,14 @@ class ItemRow extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-                color: TColor.white, fontSize: 14, fontWeight: FontWeight.w600),
+                color: TColor.text(context), fontSize: 14, fontWeight: FontWeight.w600),
           ),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.right,
               style: TextStyle(
-                  color: TColor.gray30,
+                  color: TColor.secondaryText(context),
                   fontSize: 12,
                   fontWeight: FontWeight.w500),
             ),
@@ -32,7 +32,7 @@ class ItemRow extends StatelessWidget {
             width: 8,
           ),
           Image.asset("assets/img/next.png",
-              width: 12, height: 12, color: TColor.gray30)
+              width: 12, height: 12, color: TColor.secondaryText(context))
         ],
       ),
     );

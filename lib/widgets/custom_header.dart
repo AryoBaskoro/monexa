@@ -23,18 +23,18 @@ class CustomHeader extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 border: Border.all(color: TColor.border.withOpacity(0.15)),
-                color: TColor.gray60.withOpacity(0.2),
+                color: TColor.buttonBackground(context),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.arrow_back_ios_new_rounded, color: TColor.white, size: 18),
+              child: Icon(Icons.arrow_back_ios_new_rounded, color: TColor.text(context), size: 18),
             ),
           ),
           Expanded(
             child: Center(
               child: Text(
                 title,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: TColor.text(context),
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),

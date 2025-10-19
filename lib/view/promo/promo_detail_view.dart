@@ -432,7 +432,7 @@ class _PromoDetailViewState extends State<PromoDetailView> with SingleTickerProv
             Container(
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: TColor.card(context),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Image.asset(

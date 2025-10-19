@@ -42,23 +42,23 @@ class DatePickerField extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           border: Border.all(color: TColor.border.withOpacity(0.15)),
-          color: TColor.gray60.withOpacity(0.2),
+          color: TColor.inputBackground(context),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           children: [
-            Icon(Icons.calendar_today_rounded, color: TColor.gray30, size: 20),
+            Icon(Icons.calendar_today_rounded, color: TColor.secondaryText(context), size: 20),
             const SizedBox(width: 12),
             Text(
               '${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}',
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: TColor.text(context),
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
             ),
             const Spacer(),
-            Icon(Icons.keyboard_arrow_down_rounded, color: TColor.gray30, size: 24),
+            Icon(Icons.keyboard_arrow_down_rounded, color: TColor.secondaryText(context), size: 24),
           ],
         ),
       ),

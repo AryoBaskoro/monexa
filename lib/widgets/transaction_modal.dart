@@ -11,7 +11,7 @@ class TransactionModal extends StatelessWidget {
     return Container(
       height: 345,
       decoration: BoxDecoration(
-        color: TColor.gray80,
+        color: TColor.card(context),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(40),
           topRight: Radius.circular(40),
@@ -24,22 +24,22 @@ class TransactionModal extends StatelessWidget {
             width: 65,
             height: 5,
             decoration: BoxDecoration(
-              color: TColor.gray40,
+              color: TColor.tertiaryText(context),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
           const SizedBox(height: 30),
-          _buildHeader(),
+          _buildHeader(context),
           const SizedBox(height: 35),
           _buildActionCards(context),
           const SizedBox(height: 24),
-          _buildQuickAccess(),
+          _buildQuickAccess(context),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(
@@ -49,7 +49,7 @@ class TransactionModal extends StatelessWidget {
           Text(
             'Choose a transaction type to continue',
             style: TextStyle(
-              color: TColor.gray30,
+              color: TColor.secondaryText(context),
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -108,7 +108,7 @@ class TransactionModal extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAccess() {
+  Widget _buildQuickAccess(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Row(
@@ -116,14 +116,14 @@ class TransactionModal extends StatelessWidget {
         children: [
           Icon(
             Icons.touch_app_rounded,
-            color: TColor.gray40,
+            color: TColor.tertiaryText(context),
             size: 16,
           ),
           const SizedBox(width: 8),
           Text(
             'Tap a card to get started',
             style: TextStyle(
-              color: TColor.gray40,
+              color: TColor.tertiaryText(context),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -191,7 +191,7 @@ class _TransactionCard extends StatelessWidget {
                   ),
                   child: Icon(
                     icon,
-                    color: Colors.white,
+                    color: TColor.text(context),
                     size: 50,
                   ),
                 ),
@@ -200,8 +200,8 @@ class _TransactionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: TColor.text(context),
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.3,
@@ -211,7 +211,7 @@ class _TransactionCard extends StatelessWidget {
                     Text(
                       subtitle,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: TColor.secondaryText(context),
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),

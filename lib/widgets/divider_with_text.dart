@@ -20,7 +20,7 @@ class DividerWithText extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              color: TColor.gray40,
+              color: TColor.tertiaryText(context),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),

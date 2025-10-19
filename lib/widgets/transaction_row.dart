@@ -59,7 +59,7 @@ class TransactionRow extends StatelessWidget {
                     Text(
                       sObj["name"] ?? "Transaction",
                       style: TextStyle(
-                        color: TColor.white,
+                        color: TColor.text(context),
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -70,7 +70,7 @@ class TransactionRow extends StatelessWidget {
                         Text(
                           formattedDate,
                           style: TextStyle(
-                            color: TColor.gray30,
+                            color: TColor.secondaryText(context),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -79,7 +79,7 @@ class TransactionRow extends StatelessWidget {
                         Text(
                           formattedTime,
                           style: TextStyle(
-                            color: TColor.gray40,
+                            color: TColor.tertiaryText(context),
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),

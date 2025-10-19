@@ -86,6 +86,10 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
 
   // --- WIDGET YANG DIDESAIN ULANG ---
   Widget _buildBottomNavBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBarColor = isDark ? const Color(0xff1A1A24) : Colors.white;
+    final inactiveColor = isDark ? TColor.gray30 : TColor.gray40;
+    
     return SafeArea(
       child: Padding(
         // Padding lebih besar untuk efek "floating"
@@ -100,14 +104,14 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
             ),
             Container(
               decoration: BoxDecoration(
-                // Warna latar belakang yang bersih (putih)
-                color: Colors.white,
+                // Warna latar belakang theme-aware
+                color: navBarColor,
                 // Radius lebih besar untuk bentuk kapsul yang modern
                 borderRadius: BorderRadius.circular(50),
                 // Shadow yang lebih lembut dan tersebar
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
                     blurRadius: 20,
                     spreadRadius: 1,
                   ),
@@ -131,7 +135,7 @@ class _MainTabViewState extends State<MainTabView> with TickerProviderStateMixin
                   // Background tab yang aktif menggunakan warna primer
                   tabBackgroundColor: TColor.primary,
                   // Warna ikon saat tidak aktif
-                  color: TColor.gray40,
+                  color: inactiveColor,
                   tabs: const [
                     GButton(icon: Icons.home_rounded, text: 'Home'),
                     GButton(icon: Icons.bar_chart_rounded, text: 'Statistic'),

@@ -53,7 +53,7 @@ class AmountInputField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: BoxDecoration(
         border: Border.all(color: TColor.border.withOpacity(0.15)),
-        color: TColor.gray60.withOpacity(0.2),
+        color: TColor.inputBackground(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -61,7 +61,7 @@ class AmountInputField extends StatelessWidget {
           Text(
             currencySymbol,
             style: TextStyle(
-              color: TColor.gray30,
+              color: TColor.secondaryText(context),
               fontSize: 32,
               fontWeight: FontWeight.w600,
             ),
@@ -78,15 +78,15 @@ class AmountInputField extends StatelessWidget {
                 // This formats the digits with dot separators
                 CurrencyInputFormatter(), 
               ],
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: TColor.text(context),
                 fontSize: 32,
                 fontWeight: FontWeight.w600,
               ),
               decoration: InputDecoration(
                 hintText: '0',
                 hintStyle: TextStyle(
-                  color: TColor.gray30,
+                  color: TColor.secondaryText(context),
                   fontSize: 32,
                   fontWeight: FontWeight.w600,
                 ),

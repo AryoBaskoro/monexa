@@ -19,11 +19,11 @@ class ImageButton extends StatelessWidget {
           border: Border.all(
             color: TColor.border.withOpacity(0.15),
           ),
-          color: TColor.gray60.withOpacity(0.2),
+          color: TColor.buttonBackground(context),
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.center,
-        child: Image.asset(image, width: 50, height: 50, color: TColor.gray70),
+        child: Image.asset(image, width: 50, height: 50, color: TColor.inputBorder(context)),
       ),
     );
   }

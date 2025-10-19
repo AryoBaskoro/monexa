@@ -130,7 +130,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                 height: _heightAnimation.value * _headerHeight,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: TColor.gray70.withOpacity(0.5),
+                  color: TColor.header(context),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(25),
                     bottomRight: Radius.circular(25),
@@ -143,6 +143,19 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                       opacity: _heightAnimation.value,
                       child: Image.asset("assets/img/home_bg.png"),
                     ),
+                    if (Theme.of(context).brightness == Brightness.light)
+                      Opacity(
+                        opacity: _heightAnimation.value * 0.3,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(25),
+                              bottomRight: Radius.circular(25),
+                            ),
+                          ),
+                        ),
+                      ),
                     if (_heightAnimation.value > 0.3)
                       _buildHeaderContent(MediaQuery.of(context).size),
                   ],
@@ -159,7 +172,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                 duration: const Duration(milliseconds: 300),
                 child: Icon(
                   Icons.keyboard_arrow_up_rounded,
-                  color: TColor.gray40,
+                  color: TColor.tertiaryText(context),
                   size: 24,
                 ),
               ),
@@ -184,7 +197,13 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                 width: media.width * 0.72,
                 height: media.width * 0.72,
                 child: CustomPaint(
-                  painter: CustomArcPainter(end: 220),
+                  painter: CustomArcPainter(
+                    end: 220,
+                    activeColor: TColor.secondary,
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                        ? TColor.gray60.withOpacity(0.5)
+                        : TColor.gray20.withOpacity(0.3),
+                  ),
                 ),
               ),
             ],
@@ -202,7 +221,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
               Text(
                 "10.235.000",
                 style: TextStyle(
-                  color: TColor.white,
+                  color: TColor.text(context),
                   fontSize: 35,
                   fontWeight: FontWeight.w600,
                 ),
@@ -211,7 +230,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
               Text(
                 "This month bills",
                 style: TextStyle(
-                  color: TColor.gray40,
+                  color: TColor.text(context),
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -227,12 +246,23 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
-                    color: TColor.gray.withOpacity(0.15),
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? TColor.overlayBackground(context)
+                        : Colors.white.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: TColor.gray40.withOpacity(0.3),
+                      color: TColor.borderColor(context),
                       width: 1,
                     ),
+                    boxShadow: Theme.of(context).brightness == Brightness.light
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : [],
                   ),
                   child: Row(
                     children: [
@@ -244,7 +274,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                             Text(
                               "Total Balance",
                               style: TextStyle(
-                                color: TColor.gray40,
+                                color: TColor.tertiaryText(context),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -256,7 +286,7 @@ class _CollapsibleHeaderState extends State<CollapsibleHeader> with SingleTicker
                                 _isCurrencyVisible ? "Rp 19.999.999" : "••••••",
                                 key: ValueKey<bool>(_isCurrencyVisible),
                                 style: TextStyle(
-                                  color: TColor.white,
+                                  color: TColor.text(context),
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: _isCurrencyVisible ? 0 : 2,

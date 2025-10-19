@@ -71,7 +71,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TColor.gray,
+      backgroundColor: TColor.background(context),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -101,7 +101,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
       width: double.infinity,
       padding: const EdgeInsets.only(top: 40, bottom: 30),
       decoration: BoxDecoration(
-        color: TColor.gray70.withOpacity(0.5),
+        color: TColor.header(context),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(25),
           bottomRight: Radius.circular(25),
@@ -123,7 +123,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
                       Text(
                         "Promos & Coupons",
                         style: TextStyle(
-                          color: TColor.white,
+                          color: TColor.text(context),
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
@@ -132,7 +132,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
                       Text(
                         "${coupons.length} available coupons",
                         style: TextStyle(
-                          color: TColor.gray30,
+                          color: TColor.secondaryText(context),
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -149,13 +149,13 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
                         border: Border.all(
                           color: TColor.border.withOpacity(0.1),
                         ),
-                        color: TColor.gray60.withOpacity(0.2),
+                        color: TColor.buttonBackground(context),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       alignment: Alignment.center,
                       child: Icon(
                         Icons.search,
-                        color: TColor.white,
+                        color: TColor.text(context),
                         size: 20,
                       ),
                     ),
@@ -181,7 +181,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: TColor.gray70.withOpacity(0.5),
+          color: TColor.card(context),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: TColor.border.withOpacity(0.15)),
         ),
@@ -189,7 +189,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildSummaryItem("Total Coupons", coupons.length.toString(), TColor.primary),
-            Container(width: 1, height: 40, color: TColor.gray50),
+            Container(width: 1, height: 40, color: TColor.dividerColor(context)),
             _buildSummaryItem("Total Savings", "$totalSavings%", Colors.green),
           ],
         ),
@@ -203,7 +203,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
         Text(
           title,
           style: TextStyle(
-            color: TColor.gray40,
+            color: TColor.secondaryText(context),
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -230,7 +230,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
           Text(
             "Available Coupons",
             style: TextStyle(
-              color: TColor.white,
+              color: TColor.text(context),
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -267,7 +267,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           border: Border.all(color: TColor.border.withOpacity(0.15)),
           borderRadius: BorderRadius.circular(16),
-          color: TColor.gray70.withOpacity(0.2),
+          color: TColor.card(context),
         ),
         child: Row(
           children: [
@@ -299,7 +299,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
                   Text(
                     coupon["brand"],
                     style: TextStyle(
-                      color: TColor.white,
+                      color: TColor.text(context),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                     ),
@@ -317,7 +317,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
                   Text(
                     coupon["details"],
                     style: TextStyle(
-                      color: TColor.gray30,
+                      color: TColor.secondaryText(context),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
@@ -327,7 +327,7 @@ class _PromoViewState extends State<PromoView> with TickerProviderStateMixin {
             ),
             Icon(
               Icons.arrow_forward_ios,
-              color: TColor.gray40,
+              color: TColor.tertiaryText(context),
               size: 16,
             ),
           ],

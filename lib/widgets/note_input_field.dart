@@ -17,21 +17,21 @@ class NoteInputField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         border: Border.all(color: TColor.border.withOpacity(0.15)),
-        color: TColor.gray60.withOpacity(0.2),
+        color: TColor.inputBackground(context),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
-          Icon(Icons.notes_rounded, color: TColor.gray30, size: 20),
+          Icon(Icons.notes_rounded, color: TColor.secondaryText(context), size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: TextField(
               controller: controller,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: TextStyle(color: TColor.text(context), fontSize: 15),
               maxLines: 1,
               decoration: InputDecoration(
                 hintText: hintText,
-                hintStyle: TextStyle(color: TColor.gray30, fontSize: 15),
+                hintStyle: TextStyle(color: TColor.secondaryText(context), fontSize: 15),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: EdgeInsets.zero,

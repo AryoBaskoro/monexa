@@ -29,7 +29,7 @@ class SubScriptionCell extends StatelessWidget {
           border: Border.all(
             color: TColor.border.withOpacity(0.1),
           ),
-          color: TColor.gray60.withOpacity(0.2),
+          color: TColor.cardBackground(context),
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.centerLeft,
@@ -46,7 +46,7 @@ class SubScriptionCell extends StatelessWidget {
             Text(
               sObj["name"],
               style: TextStyle(
-                  color: TColor.white,
+                  color: TColor.text(context),
                   fontSize: 14,
                   fontWeight: FontWeight.w600),
             ),
@@ -57,7 +57,7 @@ class SubScriptionCell extends StatelessWidget {
               // Updated currency format here
               _formatCurrency(sObj["price"]),
               style: TextStyle(
-                  color: TColor.white,
+                  color: TColor.text(context),
                   fontSize: 20,
                   fontWeight: FontWeight.w700),
             )

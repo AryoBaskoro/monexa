@@ -18,9 +18,10 @@ class CustomArc180Painter extends CustomPainter {
   final double blurWidth;
   final double space;
   final List<ArcValueModel> drwArcs;
+  final Color? backgroundColor;
 
   CustomArc180Painter(
-      { required this.drwArcs, this.start = 0, this.end = 180, this.space = 5, this.width = 15, this.bgWidth = 10,  this.blurWidth = 4});
+      { required this.drwArcs, this.start = 0, this.end = 180, this.space = 5, this.width = 15, this.bgWidth = 10,  this.blurWidth = 4, this.backgroundColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -30,7 +31,7 @@ class CustomArc180Painter extends CustomPainter {
 
     
     Paint backgroundPaint = Paint();
-    backgroundPaint.color = TColor.gray60.withOpacity(0.5);
+    backgroundPaint.color = backgroundColor ?? TColor.gray60.withOpacity(0.5);
     backgroundPaint.style = PaintingStyle.stroke;
     backgroundPaint.strokeWidth = bgWidth;
     backgroundPaint.strokeCap = StrokeCap.round;

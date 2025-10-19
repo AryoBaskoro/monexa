@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:monexa_app/common/color_extension.dart';
+import 'package:monexa_app/common/app_theme.dart';
+import 'package:monexa_app/common/theme_manager.dart';
 import 'package:monexa_app/view/login/welcome_view.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeManager(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
+    
     return MaterialApp(
       title: 'Monexa',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: "Inter",
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: TColor.primary,
-          background: TColor.gray80,
-          primary: TColor.primary,
-          primaryContainer: TColor.gray60,
-          secondary: TColor.secondary,
-        ),
-        useMaterial3: false,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeManager.themeMode,
       home: const WelcomeView(),
     );
   }

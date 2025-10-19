@@ -32,7 +32,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: TColor.gray,
+      backgroundColor: TColor.background(context),
       body: Column(
         children: [
           const CollapsibleHeader(),
@@ -48,13 +48,23 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildTabSelector() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final selectorBgColor = isDark ? TColor.card(context) : Colors.white;
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: selectorBgColor,
         borderRadius: BorderRadius.circular(15),
+        boxShadow: isDark ? [] : [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [

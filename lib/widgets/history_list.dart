@@ -22,6 +22,8 @@ class HistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: InkWell(
@@ -34,7 +36,7 @@ class HistoryList extends StatelessWidget {
             border: Border.all(
               color: TColor.border.withOpacity(0.15),
             ),
-            
+            color: isDark ? TColor.cardBackground(context).withOpacity(0.5) : Colors.transparent,
             borderRadius: BorderRadius.circular(16),
           ),
           alignment: Alignment.center,
@@ -54,7 +56,7 @@ class HistoryList extends StatelessWidget {
                 child: Text(
                   sObj["name"],
                   style: TextStyle(
-                      color: TColor.white,
+                      color: TColor.text(context),
                       fontSize: 14,
                       fontWeight: FontWeight.w600),
                 ),
@@ -66,7 +68,7 @@ class HistoryList extends StatelessWidget {
                 // FIXED: Now uses the currency formatting function
                 _formatCurrency(sObj["price"]),
                 style: TextStyle(
-                    color: TColor.white,
+                    color: TColor.text(context),
                     fontSize: 14,
                     fontWeight: FontWeight.w600),
               )
